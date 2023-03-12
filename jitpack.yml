@@ -1,0 +1,13 @@
+afterEvaluate {
+    publishing {
+      publications {
+        release(MavenPublication) {
+          from components.release
+    
+          groupId = 'com.github.serkandaglioglu'
+          artifactId = 'simpleadmanager'
+          version = '1.0.0'
+        }
+      }
+    }
+}
