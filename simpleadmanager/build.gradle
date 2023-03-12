@@ -1,6 +1,7 @@
 plugins {
     id 'com.android.library'
     id 'org.jetbrains.kotlin.android'
+    id 'kotlin-kapt'
 }
 
 android {
@@ -28,6 +29,11 @@ android {
     kotlinOptions {
         jvmTarget = '1.8'
     }
+
+
+    buildFeatures{
+        viewBinding true
+    }
 }
 
 dependencies {
@@ -38,4 +44,31 @@ dependencies {
     testImplementation 'junit:junit:4.13.2'
     androidTestImplementation 'androidx.test.ext:junit:1.1.5'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.5.1'
+
+
+    //implementation "androidx.lifecycle:lifecycle-common-java8:2.3.0"
+    kapt "androidx.lifecycle:lifecycle-compiler:2.5.1"
+    implementation "androidx.lifecycle:lifecycle-process:2.5.1"
+
+
+    // google service
+    implementation 'com.google.android.gms:play-services-ads:21.5.0'
+    implementation 'com.google.android.gms:play-services-appset:16.0.2'
+    implementation 'com.google.android.gms:play-services-ads-identifier:18.0.1'
+
+    implementation project(path: ':nativetemplates')
+
+
+
+    // APPLOVIN
+    implementation 'com.applovin:applovin-sdk:+'
+    implementation 'com.applovin.mediation:adcolony-adapter:+'
+    implementation 'com.applovin.mediation:fyber-adapter:+'
+    implementation 'com.applovin.mediation:google-adapter:+'
+    implementation 'com.applovin.mediation:ironsource-adapter:+'
+    implementation 'com.applovin.mediation:facebook-adapter:+'
+    implementation 'com.applovin.mediation:mintegral-adapter:+' // admostla beraber sorun çıkıyor
+    implementation 'com.applovin.mediation:bytedance-adapter:+'
+    implementation 'com.applovin.mediation:unityads-adapter:+'
+    implementation 'com.applovin.mediation:vungle-adapter:+'
 }
