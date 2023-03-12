@@ -6,7 +6,7 @@ afterEvaluate {
     
           groupId = 'com.github.serkandaglioglu'
           artifactId = 'simpleadmanager'
-          version = '1.0.0'
+          version = '1.0.2'
         }
       }
     }
