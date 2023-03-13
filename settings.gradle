@@ -16,3 +16,4 @@ rootProject.name = "Simple AdManager"
 include ':app'
 include ':simpleadmanager'
 include ':nativetemplates'
+
