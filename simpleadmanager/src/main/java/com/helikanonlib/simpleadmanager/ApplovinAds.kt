@@ -117,7 +117,7 @@ class ApplovinAds(override var appId: String) : AdPlatformWrapper(appId) {
 
     }
 
-    override fun showInterstitial(activity: Activity, placementId: String, listener: AdPlatformShowListener?) {
+    override fun showInterstitial(activity: Activity, placementId: String, shownWhere: String, listener: AdPlatformShowListener?) {
         if (!isInterstitialLoaded(placementId)) {
             listener?.onError(AdErrorMode.PLATFORM, "${platformType.name} interstitial >> noads loaded", platformType)
             return
@@ -154,7 +154,7 @@ class ApplovinAds(override var appId: String) : AdPlatformWrapper(appId) {
             }
 
         })
-        interstitial?.showAd()
+        interstitial?.showAd(shownWhere)
         adIntances[placementId] = null
 
     }
@@ -235,7 +235,7 @@ class ApplovinAds(override var appId: String) : AdPlatformWrapper(appId) {
 
     }
 
-    override fun showRewarded(activity: Activity, placementId: String, listener: AdPlatformShowListener?) {
+    override fun showRewarded(activity: Activity, placementId: String, shownWhere: String, listener: AdPlatformShowListener?) {
         if (!isRewardedLoaded(placementId)) {
             listener?.onError(AdErrorMode.PLATFORM, "${platformType.name} rewarded >> noadsloaded", platformType)
             return
@@ -282,7 +282,7 @@ class ApplovinAds(override var appId: String) : AdPlatformWrapper(appId) {
             }
         })
 
-        rewardedAd?.showAd()
+        rewardedAd?.showAd(shownWhere)
         adIntances[placementId] = null
 
     }
@@ -345,6 +345,7 @@ class ApplovinAds(override var appId: String) : AdPlatformWrapper(appId) {
                     bannerAdView
                 )
             }
+
             override fun onAdLoadFailed(adUnitId: String?, error: MaxError?) {
                 adIntances[placementId] = null
                 activity.runOnUiThread {
@@ -380,7 +381,7 @@ class ApplovinAds(override var appId: String) : AdPlatformWrapper(appId) {
 
         })
         _removeBannerViewIfExists(bannerAdView, containerView)
-        containerView.addView(bannerAdView)
+        containerView.addView(bannerAdView, lp)
         bannerAdView.loadAd()
     }
 

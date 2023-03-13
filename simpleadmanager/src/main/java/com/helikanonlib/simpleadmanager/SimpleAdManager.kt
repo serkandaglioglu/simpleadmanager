@@ -123,6 +123,26 @@ class SimpleAdManager {
     }*/
 
 
+    fun enableTestMode(activity: Activity, deviceId: String) {
+
+        this.testMode = true
+        this.deviceId = deviceId
+
+        placementGroups.forEach {
+            if (it.platformType == AdPlatformTypeEnum.ADMOB) {
+                it.interstitial = "ca-app-pub-3940256099942544/1033173712"
+                it.banner = "ca-app-pub-3940256099942544/6300978111"
+                it.rewarded = "ca-app-pub-3940256099942544/5224354917"
+                it.mrec = "ca-app-pub-3940256099942544/6300978111"
+                it.nativeSmall = "ca-app-pub-3940256099942544/2247696110"
+                it.nativeMedium = "ca-app-pub-3940256099942544/2247696110"
+                it.appOpenAd = "ca-app-pub-3940256099942544/3419835294"
+            }
+        }
+
+
+    }
+
     fun addAdPlatform(adPlatform: AdPlatformWrapper) = apply { this.adPlatforms.add(adPlatform) }
     fun getAdPlatformByType(platformType: AdPlatformTypeEnum): AdPlatformWrapper? {
         val filteredPlatforms = adPlatforms.filter { it -> it.platformType == platformType }
@@ -262,7 +282,10 @@ class SimpleAdManager {
 
 
     @JvmOverloads
-    fun loadAndShowInterstitial(activity: Activity, placementGroupCode: String = defaultPlacementGroupCode, listener: AdPlatformShowListener? = null, platformType: AdPlatformTypeEnum? = null) {
+    fun loadAndShowInterstitial(
+        activity: Activity, shownWhere: String = "defaultPlace", placementGroupCode: String = defaultPlacementGroupCode,
+        listener: AdPlatformShowListener? = null, platformType: AdPlatformTypeEnum? = null
+    ) {
 
         if (isEnableShowLoadingViewForInterstitial) {
             activity.runOnUiThread {
@@ -273,7 +296,7 @@ class SimpleAdManager {
         val loadListener: AdPlatformLoadListener = object : AdPlatformLoadListener() {
             override fun onLoaded(adPlatformEnum: AdPlatformTypeEnum?) {
                 // this listener will trigger just one time after firt load any platform
-                _showInterstitial(activity, placementGroupCode, listener, platformType, false)
+                _showInterstitial(activity, shownWhere, placementGroupCode, listener, platformType, false)
             }
 
             override fun onError(errorMode: AdErrorMode?, errorMessage: String?, adPlatformEnum: AdPlatformTypeEnum?) {
@@ -281,7 +304,7 @@ class SimpleAdManager {
                 // after try all platforms
                 // _showInterstitial will trigger user listener
                 if (errorMode == AdErrorMode.MANAGER) {
-                    _showInterstitial(activity, placementGroupCode, listener, platformType, false)
+                    _showInterstitial(activity, shownWhere, placementGroupCode, listener, platformType, false)
                 }
 
 
@@ -292,7 +315,8 @@ class SimpleAdManager {
 
     @JvmOverloads
     fun showInterstitialForTimeStrategy(
-        activity: Activity, placementGroupCode: String = defaultPlacementGroupCode, listener: AdPlatformShowListener? = null,
+        activity: Activity, shownWhere: String = "defaultPlace", placementGroupCode: String = defaultPlacementGroupCode,
+        listener: AdPlatformShowListener? = null,
         platformType: AdPlatformTypeEnum? = null, loadAndShowIfNotExistsAdsOnAutoloadMode: Boolean = true
     ) {
         if (!showAds) return
@@ -308,31 +332,33 @@ class SimpleAdManager {
         }
 
         if (isAvailableToShow) {
-            showInterstitial(activity, placementGroupCode, listener, platformType, loadAndShowIfNotExistsAdsOnAutoloadMode)
+            showInterstitial(activity, shownWhere, placementGroupCode, listener, platformType, loadAndShowIfNotExistsAdsOnAutoloadMode)
         }
     }
 
     @JvmOverloads
     fun showInterstitial(
-        activity: Activity, placementGroupCode: String = defaultPlacementGroupCode, listener: AdPlatformShowListener? = null,
+        activity: Activity, shownWhere: String = "defaultPlace", placementGroupCode: String = defaultPlacementGroupCode,
+        listener: AdPlatformShowListener? = null,
         platformType: AdPlatformTypeEnum? = null, loadAndShowIfNotExistsAdsOnAutoloadMode: Boolean = true
     ) {
         if (!showAds) return
 
         if (autoLoadForInterstitial) {
-            val isShowed = _showInterstitial(activity, placementGroupCode, listener, platformType, loadAndShowIfNotExistsAdsOnAutoloadMode)
+            val isShowed = _showInterstitial(activity, shownWhere, placementGroupCode, listener, platformType, loadAndShowIfNotExistsAdsOnAutoloadMode)
         } else {
 
             activity.runOnUiThread {
                 addLoadingViewToActivity(activity)
             }
-            loadAndShowInterstitial(activity, placementGroupCode, listener, platformType)
+            loadAndShowInterstitial(activity, shownWhere, placementGroupCode, listener, platformType)
         }
     }
 
     // load edilmiş reklamı göstermeye çalışır.
     private fun _showInterstitial(
-        activity: Activity, placementGroupCode: String = defaultPlacementGroupCode, listener: AdPlatformShowListener? = null,
+        activity: Activity, shownWhere: String = "defaultPlace", placementGroupCode: String = defaultPlacementGroupCode,
+        listener: AdPlatformShowListener? = null,
         platformType: AdPlatformTypeEnum? = null, loadAndShowIfNotExistsAdsOnAutoloadMode: Boolean = false
     ): Boolean {
         if (!showAds) return true
@@ -387,7 +413,7 @@ class SimpleAdManager {
                 if (autoLoadForInterstitial) {
                     if (isEnabledLoadAndShowIfNotExistsAdsOnAutoloadMode && loadAndShowIfNotExistsAdsOnAutoloadMode) {
                         stopAutoloadInterstitialHandler()
-                        loadAndShowInterstitial(activity, placementGroupCode, listener, platformType)
+                        loadAndShowInterstitial(activity, shownWhere, placementGroupCode, listener, platformType)
                     } else {
                         _autoloadInterstitialByHandler(activity, placementGroupCode, null, platformType)
 
@@ -413,7 +439,7 @@ class SimpleAdManager {
                 val placementId = getPlacementGroupByCodeAndPlatform(placementGroupCode, platform.platformType)?.interstitial
                 placementId?.let {
                     if (platform.isInterstitialLoaded(placementId) == true) {
-                        platform.showInterstitial(activity, placementId, _listener)
+                        platform.showInterstitial(activity, placementId, shownWhere, _listener)
                         hasLoadedInterstitial = true
                     }
                 }
@@ -425,7 +451,7 @@ class SimpleAdManager {
                     val placementId = getPlacementGroupByCodeAndPlatform(placementGroupCode, platform.platformType)?.interstitial
                     if (placementId != null) {
                         if (platform.isInterstitialLoaded(placementId)) {
-                            platform.showInterstitial(activity, placementId, _listener)
+                            platform.showInterstitial(activity, placementId, shownWhere, _listener)
                             hasLoadedInterstitial = true
                             return@breaker
                             //return@forEach
@@ -591,19 +617,22 @@ class SimpleAdManager {
 
 
     @JvmOverloads
-    fun loadAndShowRewarded(activity: Activity, placementGroupCode: String = defaultPlacementGroupCode, listener: AdPlatformShowListener? = null, platformType: AdPlatformTypeEnum? = null) {
+    fun loadAndShowRewarded(
+        activity: Activity, shownWhere: String = "defaultPlace", placementGroupCode: String = defaultPlacementGroupCode,
+        listener: AdPlatformShowListener? = null, platformType: AdPlatformTypeEnum? = null
+    ) {
         /*
         call _showRewarded(listener, platform) in onLoaded and onError because of
         we wants call listener?.onError by _showRewarded
          */
         val loadListener: AdPlatformLoadListener = object : AdPlatformLoadListener() {
             override fun onLoaded(adPlatformEnum: AdPlatformTypeEnum?) {
-                _showRewarded(activity, placementGroupCode, listener, platformType)
+                _showRewarded(activity, shownWhere, placementGroupCode, listener, platformType)
             }
 
             override fun onError(errorMode: AdErrorMode?, errorMessage: String?, adPlatformEnum: AdPlatformTypeEnum?) {
                 if (errorMode == AdErrorMode.MANAGER) {
-                    _showRewarded(activity, placementGroupCode, listener, platformType)
+                    _showRewarded(activity, shownWhere, placementGroupCode, listener, platformType)
                 }
             }
         }
@@ -612,27 +641,29 @@ class SimpleAdManager {
 
     @JvmOverloads
     fun showRewarded(
-        activity: Activity, placementGroupCode: String = defaultPlacementGroupCode, listener: AdPlatformShowListener? = null,
+        activity: Activity, shownWhere: String = "defaultPlace", placementGroupCode: String = defaultPlacementGroupCode,
+        listener: AdPlatformShowListener? = null,
         platformType: AdPlatformTypeEnum? = null, loadAndShowIfNotExistsAdsOnAutoloadMode: Boolean = true
     ) {
         if (!showAds) return
 
         if (autoLoadForRewarded) {
-            val isShowed = _showRewarded(activity, placementGroupCode, listener, platformType)
+            val isShowed = _showRewarded(activity, shownWhere, placementGroupCode, listener, platformType)
 
             if (!isShowed) {
                 if (isEnabledLoadAndShowIfNotExistsAdsOnAutoloadMode && loadAndShowIfNotExistsAdsOnAutoloadMode) {
                     stopAutoloadRewardedHandler()
-                    loadAndShowRewarded(activity, placementGroupCode, listener, platformType)
+                    loadAndShowRewarded(activity, shownWhere, placementGroupCode, listener, platformType)
                 }
             }
         } else {
-            loadAndShowRewarded(activity, placementGroupCode, listener, platformType)
+            loadAndShowRewarded(activity, shownWhere, placementGroupCode, listener, platformType)
         }
     }
 
     fun _showRewarded(
-        activity: Activity, placementGroupCode: String, listener: AdPlatformShowListener? = null,
+        activity: Activity, shownWhere: String = "defaultPlace", placementGroupCode: String,
+        listener: AdPlatformShowListener? = null,
         platformType: AdPlatformTypeEnum? = null
     ): Boolean {
         if (!showAds) return true
@@ -690,7 +721,7 @@ class SimpleAdManager {
                 val placementId = getPlacementGroupByCodeAndPlatform(placementGroupCode, platform.platformType)?.rewarded
                 placementId?.let {
                     if (platform.isRewardedLoaded(placementId)) {
-                        platform.showRewarded(activity, placementId, _listener)
+                        platform.showRewarded(activity, placementId, shownWhere, _listener)
                         hasLoadedRewarded = true
                     }
                 }
@@ -702,7 +733,7 @@ class SimpleAdManager {
                     val placementId = getPlacementGroupByCodeAndPlatform(placementGroupCode, platform.platformType)?.rewarded
                     if (placementId != null) {
                         if (platform.isRewardedLoaded(placementId)) {
-                            platform.showRewarded(activity, placementId, _listener)
+                            platform.showRewarded(activity, placementId, shownWhere, _listener)
                             hasLoadedRewarded = true
                             return@breaker
                         }
@@ -888,7 +919,7 @@ class SimpleAdManager {
 
         val platform = mrecAdPlatforms[platformIndex]
         val placementId = getPlacementGroupByCodeAndPlatform(placementGroupCode, platform.platformType)?.mrec
-        platform.showMrec(activity, placementId?:"wrong_placement", containerView, _listener)
+        platform.showMrec(activity, placementId ?: "wrong_placement", containerView, _listener)
     }
 
     private fun _showMrec(
@@ -1081,9 +1112,6 @@ class SimpleAdManager {
         handlerThread?.quit()
         handlerThread = null
     }
-
-
-    // TODO Add parameter for show placement show place
 
     // AUTOLOAD HANDLERS
     // handlers

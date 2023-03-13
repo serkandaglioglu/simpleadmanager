@@ -101,7 +101,7 @@ class AdmobAds(override var appId: String) : AdPlatformWrapper(appId) {
             })
     }
 
-    override fun showInterstitial(activity: Activity, placementId: String, listener: AdPlatformShowListener?) {
+    override fun showInterstitial(activity: Activity, placementId: String, shownWhere: String, listener: AdPlatformShowListener?) {
         if (!isInterstitialLoaded(placementId)) {
             listener?.onError(AdErrorMode.PLATFORM, "${platformType.name} interstitial >> noads loaded", platformType)
             return
@@ -178,7 +178,7 @@ class AdmobAds(override var appId: String) : AdPlatformWrapper(appId) {
 
     }
 
-    override fun showRewarded(activity: Activity, placementId: String, listener: AdPlatformShowListener?) {
+    override fun showRewarded(activity: Activity, placementId: String, shownWhere: String, listener: AdPlatformShowListener?) {
         if (!isRewardedLoaded(placementId)) {
             listener?.onError(AdErrorMode.PLATFORM, "${platformType.name} rewarded >> noadsloaded", platformType)
             return

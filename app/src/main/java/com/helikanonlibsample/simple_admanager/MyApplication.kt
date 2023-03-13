@@ -59,6 +59,17 @@ class MyApplication : Application() {
                     nativeMedium = "96454048eeffaad2",
                     appOpenAd = "dd9249369deec4ec"
                 ),
+                AdPlacementGroup(
+                    groupCode = "default",
+                    platformType = AdPlatformTypeEnum.IRONSOURCE,
+                    interstitial = "DefaultInterstitial",
+                    rewarded = "DefaultRewardedVideo",
+                    banner = "DefaultBanner",
+                    mrec = "MREC_BANNER",
+                    nativeSmall = "nosupportSmall",
+                    nativeMedium = "nosupportMedium",
+                    appOpenAd = "nosupport"
+                ),
 
                 AdPlacementGroup(
                     groupCode = "second",
@@ -75,7 +86,8 @@ class MyApplication : Application() {
 
             adPlatforms = mutableListOf<AdPlatformWrapper>(
                 AdmobAds("ca-app-pub-3940256099942544~3347511713"),
-                ApplovinAds("noneed")
+                ApplovinAds("noneed"),
+                IronSourceAds("cd353905")
             )
         }
 

@@ -16,7 +16,7 @@ abstract class AdPlatformWrapper(open var appId: String) {
     abstract fun enableTestMode(context: Context, deviceId: String? = null)
 
     abstract fun loadInterstitial(activity: Activity, placementId: String, listener: AdPlatformLoadListener?)
-    abstract fun showInterstitial(activity: Activity, placementId: String, listener: AdPlatformShowListener? = null)
+    abstract fun showInterstitial(activity: Activity, placementId: String, shownWhere: String, listener: AdPlatformShowListener? = null)
     abstract fun isInterstitialLoaded(placementId: String): Boolean
 
     abstract fun isBannerLoaded(placementId: String): Boolean
@@ -26,7 +26,7 @@ abstract class AdPlatformWrapper(open var appId: String) {
     abstract fun showMrec(activity: Activity, placementId: String, containerView: RelativeLayout, listener: AdPlatformShowListener? = null)
 
     abstract fun loadRewarded(activity: Activity, placementId: String, listener: AdPlatformLoadListener? = null)
-    abstract fun showRewarded(activity: Activity, placementId: String, listener: AdPlatformShowListener? = null)
+    abstract fun showRewarded(activity: Activity, placementId: String, shownWhere: String, listener: AdPlatformShowListener? = null)
     abstract fun isRewardedLoaded(placementId: String): Boolean
 
 
