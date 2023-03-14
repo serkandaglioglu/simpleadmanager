@@ -58,7 +58,7 @@ class ApplovinAds(override var appId: String) : AdPlatformWrapper(appId) {
 
         val interstitial: MaxInterstitialAd? = if (adIntances.containsKey(placementId)) adIntances.get(placementId)?.instance as MaxInterstitialAd? else null
 
-        var isLoaded = interstitial != null
+        var isLoaded = interstitial?.isReady ?: false
         if (isLoaded && !isValidLoadedInterstitial(platformType)) {
             adIntances[placementId] = null
             isLoaded = false
@@ -165,7 +165,7 @@ class ApplovinAds(override var appId: String) : AdPlatformWrapper(appId) {
     override fun isRewardedLoaded(placementId: String): Boolean {
         val rewardedAd: MaxRewardedAd? = if (adIntances.containsKey(placementId)) adIntances.get(placementId)?.instance as MaxRewardedAd? else null
 
-        var isLoaded = rewardedAd != null
+        var isLoaded = rewardedAd?.isReady ?: false
         if (isLoaded && !isValidLoadedRewarded(platformType)) {
             adIntances[placementId] = null
             isLoaded = false
