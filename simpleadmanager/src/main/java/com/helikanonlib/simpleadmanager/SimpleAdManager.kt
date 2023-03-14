@@ -1136,7 +1136,7 @@ class SimpleAdManager {
 
 
     // AD SHOWING VIEW
-    var isEnableShowLoadingViewForInterstitial = true
+    var isEnableShowLoadingViewForInterstitial:Boolean = true
     var loadingView: AdLoadingCustomView? = null
     fun initLoadingView(activity: Activity, rootView: ViewGroup? = null) {
         if (loadingView != null) {
