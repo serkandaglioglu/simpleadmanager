@@ -100,7 +100,7 @@ class MyApplication : Application() {
         adManager.setAdPlatformSortByAdFormatStr("default", AdFormatEnum.NATIVE_MEDIUM.name, "applovin,admob")
         adManager.setAdPlatformSortByAdFormatStr("default", AdFormatEnum.APP_OPEN.name, "applovin,admob")
 
-
+adManager.isEnableShowLoadingViewForInterstitial = false
         adManager.setAdPlatformSortByAdFormatStr("second", AdFormatEnum.INTERSTITIAL.name, "admob")
 
 
