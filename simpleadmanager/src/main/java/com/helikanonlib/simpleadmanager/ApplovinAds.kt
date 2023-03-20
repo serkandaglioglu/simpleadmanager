@@ -309,15 +309,15 @@ class ApplovinAds(override var appId: String) : AdPlatformWrapper(appId) {
 
         var bannerAdView: MaxAdView? = if (adIntances.containsKey(placementId)) adIntances.get(placementId)?.instance as MaxAdView? else null
 
-        val lp = RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.WRAP_CONTENT, RelativeLayout.LayoutParams.WRAP_CONTENT)
+        /*val lp = RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.WRAP_CONTENT, RelativeLayout.LayoutParams.WRAP_CONTENT)
             .apply {
                 addRule(RelativeLayout.CENTER_HORIZONTAL)
-            }
+            }*/
 
         if (_isBannerLoaded(bannerAdView)) {
             try {
                 _removeBannerViewIfExists(bannerAdView)
-                containerView.addView(bannerAdView, lp)
+                containerView.addView(bannerAdView)
                 listener?.onDisplayed(platformType)
             } catch (e: Exception) {
                 listener?.onError(AdErrorMode.PLATFORM, "${platformType.name} banner >> isbannerloaded", platformType)
@@ -386,7 +386,7 @@ class ApplovinAds(override var appId: String) : AdPlatformWrapper(appId) {
 
         })
         _removeBannerViewIfExists(bannerAdView, containerView)
-        containerView.addView(bannerAdView, lp)
+        containerView.addView(bannerAdView)
         bannerAdView.loadAd()
     }
 
@@ -410,15 +410,15 @@ class ApplovinAds(override var appId: String) : AdPlatformWrapper(appId) {
 
         var mrecAdView: MaxAdView? = if (adIntances.containsKey(placementId)) adIntances.get(placementId)?.instance as MaxAdView? else null
 
-        val lp = RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.WRAP_CONTENT, RelativeLayout.LayoutParams.WRAP_CONTENT)
+        /*val lp = RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.WRAP_CONTENT, RelativeLayout.LayoutParams.WRAP_CONTENT)
             .apply {
                 addRule(RelativeLayout.CENTER_HORIZONTAL)
-            }
+            }*/
 
         if (_isBannerLoaded(mrecAdView)) {
             try {
                 _removeBannerViewIfExists(mrecAdView)
-                containerView.addView(mrecAdView, lp)
+                containerView.addView(mrecAdView)
                 listener?.onDisplayed(platformType)
             } catch (e: Exception) {
                 listener?.onError(AdErrorMode.PLATFORM, "${platformType.name} mrec >> ismrecloaded", platformType)
