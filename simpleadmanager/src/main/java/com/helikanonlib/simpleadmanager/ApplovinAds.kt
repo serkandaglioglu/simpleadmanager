@@ -337,7 +337,7 @@ class ApplovinAds(override var appId: String) : AdPlatformWrapper(appId) {
             .apply {
                 addRule(RelativeLayout.CENTER_HORIZONTAL)
             }
-        bannerAdView.setExtraParameter("adaptive_banner", "true")
+        // bannerAdView.setExtraParameter("adaptive_banner", "true")
         // applovinBannerIns?.layoutParams = FrameLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, activity.resources.getDimensionPixelSize(R.dimen.applovinBannerHeight))
         //applovinBannerIns?.layoutParams = RelativeLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, activity.resources.getDimensionPixelSize(R.dimen.applovinBannerHeight))
 
