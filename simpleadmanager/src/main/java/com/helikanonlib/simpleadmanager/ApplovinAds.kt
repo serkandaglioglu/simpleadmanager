@@ -4,6 +4,7 @@ import android.app.Activity
 import android.content.Context
 import android.view.ViewGroup
 import android.widget.RelativeLayout
+import androidx.core.view.ViewCompat
 import com.applovin.mediation.*
 import com.applovin.mediation.ads.MaxAdView
 import com.applovin.mediation.ads.MaxInterstitialAd
@@ -325,9 +326,13 @@ class ApplovinAds(override var appId: String) : AdPlatformWrapper(appId) {
         }
 
         bannerAdView = MaxAdView(placementId, activity)
+        // bannerAdView.id = ViewCompat.generateViewId()
 
-        val heightDp = MaxAdFormat.BANNER.getAdaptiveSize(activity).height
-        val heightPx = AppLovinSdkUtils.dpToPx(activity, heightDp)
+        val isTablet = AppLovinSdkUtils.isTablet(activity)
+        val heightPx = AppLovinSdkUtils.dpToPx(activity, if (isTablet) 90 else 50)
+        // val heightDp = MaxAdFormat.BANNER.getAdaptiveSize(activity).height
+        // val heightPx = AppLovinSdkUtils.dpToPx(activity, heightDp)
+
         bannerAdView.layoutParams = RelativeLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, heightPx)
             .apply {
                 addRule(RelativeLayout.CENTER_HORIZONTAL)
@@ -422,9 +427,11 @@ class ApplovinAds(override var appId: String) : AdPlatformWrapper(appId) {
         }
 
         mrecAdView = MaxAdView(placementId, activity)
+        // bannerAdView.id = ViewCompat.generateViewId()
 
         val widthPx = AppLovinSdkUtils.dpToPx(activity, 300)
         val heightPx = AppLovinSdkUtils.dpToPx(activity, 250)
+
         mrecAdView?.layoutParams = RelativeLayout.LayoutParams(widthPx, heightPx).apply {
             addRule(RelativeLayout.CENTER_HORIZONTAL)
         }
