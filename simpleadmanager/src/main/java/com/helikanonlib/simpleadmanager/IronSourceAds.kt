@@ -3,6 +3,7 @@ package com.helikanonlib.simpleadmanager
 import android.app.Activity
 import android.content.Context
 import android.util.DisplayMetrics
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -386,64 +387,75 @@ class IronSourceAds(override var appId: String) : AdPlatformWrapper(appId) {
 
     override fun destroy(activity: Activity) {
 
+        try {
+            for (entry in adIntances.entries.iterator()) {
+                val adIns = entry.value
+                if (adIns == null) continue
 
-        for (entry in adIntances.entries.iterator()) {
-            val adIns = entry.value
-            if (adIns == null) continue
+                if (adIns.format == AdFormatEnum.INTERSTITIAL) {
+                    adIntances[entry.key] = null
+                } else if (adIns.format == AdFormatEnum.REWARDED) {
+                    adIntances[entry.key] = null
+                } else if (adIns.format == AdFormatEnum.BANNER) {
+                    destroyBanner(activity, adIns.placementId)
+                } else if (adIns.format == AdFormatEnum.MREC) {
+                    destroyMrec(activity, adIns.placementId)
+                } else if (adIns.format == AdFormatEnum.NATIVE_SMALL) {
 
-            if (adIns.format == AdFormatEnum.INTERSTITIAL) {
-                adIntances[entry.key] = null
-            } else if (adIns.format == AdFormatEnum.REWARDED) {
-                adIntances[entry.key] = null
-            } else if (adIns.format == AdFormatEnum.BANNER) {
-                destroyBanner(activity, adIns.placementId)
-            } else if (adIns.format == AdFormatEnum.MREC) {
-                destroyMrec(activity, adIns.placementId)
-            } else if (adIns.format == AdFormatEnum.NATIVE_SMALL) {
+                } else if (adIns.format == AdFormatEnum.NATIVE_MEDIUM) {
 
-            } else if (adIns.format == AdFormatEnum.NATIVE_MEDIUM) {
-
+                }
             }
+
+
+        } catch (e: Exception) {
+            Log.e("IronsourceAds", e.message ?: "")
         }
     }
 
     override fun destroyBanner(activity: Activity, placementId: String) {
-
-        var bannerAdView: IronSourceBannerLayout? = if (adIntances.containsKey(placementId)) adIntances.get(placementId)?.instance as IronSourceBannerLayout? else null
-        if (_isBannerLoaded(bannerAdView)) {
-            try {
-                _removeBannerViewIfExists(bannerAdView)
-            } catch (e: Exception) {
-                e.printStackTrace()
+        try {
+            var bannerAdView: IronSourceBannerLayout? = if (adIntances.containsKey(placementId)) adIntances.get(placementId)?.instance as IronSourceBannerLayout? else null
+            if (_isBannerLoaded(bannerAdView)) {
+                try {
+                    _removeBannerViewIfExists(bannerAdView)
+                } catch (e: Exception) {
+                    e.printStackTrace()
+                }
             }
-        }
 
-        bannerAdView?.let {
-            IronSource.destroyBanner(bannerAdView)
-            bannerAdView = null
-        }
-        adIntances[placementId] = null
+            bannerAdView?.let {
+                IronSource.destroyBanner(bannerAdView)
+                bannerAdView = null
+            }
+            adIntances[placementId] = null
 
+        } catch (e: Exception) {
+            Log.e("IronsourceAds", e.message ?: "")
+        }
 
     }
 
     override fun destroyMrec(activity: Activity, placementId: String) {
-
-        var mrecAdView: IronSourceBannerLayout? = if (adIntances.containsKey(placementId)) adIntances.get(placementId)?.instance as IronSourceBannerLayout? else null
-        if (_isBannerLoaded(mrecAdView)) {
-            try {
-                _removeBannerViewIfExists(mrecAdView)
-            } catch (e: Exception) {
-                e.printStackTrace()
+        try {
+            var mrecAdView: IronSourceBannerLayout? = if (adIntances.containsKey(placementId)) adIntances.get(placementId)?.instance as IronSourceBannerLayout? else null
+            if (_isBannerLoaded(mrecAdView)) {
+                try {
+                    _removeBannerViewIfExists(mrecAdView)
+                } catch (e: Exception) {
+                    e.printStackTrace()
+                }
             }
-        }
 
-        mrecAdView?.let {
-            IronSource.destroyBanner(mrecAdView)
-            mrecAdView = null
-        }
-        adIntances[placementId] = null
+            mrecAdView?.let {
+                IronSource.destroyBanner(mrecAdView)
+                mrecAdView = null
+            }
+            adIntances[placementId] = null
 
+        } catch (e: Exception) {
+            Log.e("IronsourceAds", e.message ?: "")
+        }
     }
 
 

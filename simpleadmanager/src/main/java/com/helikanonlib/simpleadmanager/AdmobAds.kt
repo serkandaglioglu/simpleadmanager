@@ -3,6 +3,7 @@ package com.helikanonlib.simpleadmanager
 import android.app.Activity
 import android.content.Context
 import android.util.DisplayMetrics
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import android.widget.RelativeLayout
@@ -528,83 +529,96 @@ class AdmobAds(override var appId: String) : AdPlatformWrapper(appId) {
 
     override fun destroy(activity: Activity) {
 
+        try {
+            for (entry in adIntances.entries.iterator()) {
+                val adIns = entry.value
+                if (adIns == null) continue
 
-        for (entry in adIntances.entries.iterator()) {
-            val adIns = entry.value
-            if (adIns == null) continue
-
-            if (adIns.format == AdFormatEnum.INTERSTITIAL) {
-                adIntances[entry.key] = null
-            } else if (adIns.format == AdFormatEnum.REWARDED) {
-                adIntances[entry.key] = null
-            } else if (adIns.format == AdFormatEnum.BANNER) {
-                destroyBanner(activity, adIns.placementId)
-            } else if (adIns.format == AdFormatEnum.MREC) {
-                destroyMrec(activity, adIns.placementId)
-            } else if (adIns.format == AdFormatEnum.NATIVE_SMALL) {
-                _destroyAllNativeAds(activity, adIns.placementId)
-            } else if (adIns.format == AdFormatEnum.NATIVE_MEDIUM) {
-                _destroyAllNativeAds(activity, adIns.placementId)
+                if (adIns.format == AdFormatEnum.INTERSTITIAL) {
+                    adIntances[entry.key] = null
+                } else if (adIns.format == AdFormatEnum.REWARDED) {
+                    adIntances[entry.key] = null
+                } else if (adIns.format == AdFormatEnum.BANNER) {
+                    destroyBanner(activity, adIns.placementId)
+                } else if (adIns.format == AdFormatEnum.MREC) {
+                    destroyMrec(activity, adIns.placementId)
+                } else if (adIns.format == AdFormatEnum.NATIVE_SMALL) {
+                    _destroyAllNativeAds(activity, adIns.placementId)
+                } else if (adIns.format == AdFormatEnum.NATIVE_MEDIUM) {
+                    _destroyAllNativeAds(activity, adIns.placementId)
+                }
             }
+        } catch (e: Exception) {
+            Log.e("AdmobAds", e.message ?: "")
         }
+
     }
 
     private fun _destroyAllNativeAds(activity: Activity, placementId: String) {
-
-        // destroy NATIVE ads
-        val adIns = if (adIntances.containsKey(placementId) && adIntances[placementId] != null) adIntances.get(placementId) else null
-        if (adIns == null) return
-
-        var nativeAds: ArrayList<Any> = adIns as ArrayList<Any>
         try {
-            nativeAds.forEach {
-                (it as NativeAd).destroy()
+            // destroy NATIVE ads
+            val adIns = if (adIntances.containsKey(placementId) && adIntances[placementId] != null) adIntances.get(placementId) else null
+            if (adIns == null) return
+
+            var nativeAds: ArrayList<Any> = adIns as ArrayList<Any>
+            try {
+                nativeAds.forEach {
+                    (it as NativeAd).destroy()
+                }
+            } catch (e: Exception) {
+                e.printStackTrace()
+            } finally {
+                nativeAds.clear()
+                adIntances[placementId] = PlatformAdInstance(
+                    adIns.format,
+                    adIns.placementId,
+                    nativeAds
+                )
             }
         } catch (e: Exception) {
-            e.printStackTrace()
-        } finally {
-            nativeAds.clear()
-            adIntances[placementId] = PlatformAdInstance(
-                adIns.format,
-                adIns.placementId,
-                nativeAds
-            )
+            Log.e("AdmobAds", e.message ?: "")
         }
     }
 
     override fun destroyBanner(activity: Activity, placementId: String) {
-
-        var bannerAdView: AdView? = if (adIntances.containsKey(placementId)) adIntances.get(placementId)?.instance as AdView? else null
-        if (_isBannerLoaded(bannerAdView)) {
-            try {
-                _removeBannerViewIfExists(bannerAdView)
-            } catch (e: Exception) {
-                e.printStackTrace()
+        try {
+            var bannerAdView: AdView? = if (adIntances.containsKey(placementId)) adIntances.get(placementId)?.instance as AdView? else null
+            if (_isBannerLoaded(bannerAdView)) {
+                try {
+                    _removeBannerViewIfExists(bannerAdView)
+                } catch (e: Exception) {
+                    e.printStackTrace()
+                }
             }
+
+            bannerAdView?.destroy()
+            bannerAdView = null
+            adIntances[placementId] = null
+
+        } catch (e: Exception) {
+            Log.e("AdmobAds", e.message ?: "")
         }
-
-        bannerAdView?.destroy()
-        bannerAdView = null
-        adIntances[placementId] = null
-
 
     }
 
     override fun destroyMrec(activity: Activity, placementId: String) {
-
-        var mrecAdView: AdView? = if (adIntances.containsKey(placementId)) adIntances.get(placementId)?.instance as AdView? else null
-        if (_isBannerLoaded(mrecAdView)) {
-            try {
-                _removeBannerViewIfExists(mrecAdView)
-            } catch (e: Exception) {
-                e.printStackTrace()
+        try {
+            var mrecAdView: AdView? = if (adIntances.containsKey(placementId)) adIntances.get(placementId)?.instance as AdView? else null
+            if (_isBannerLoaded(mrecAdView)) {
+                try {
+                    _removeBannerViewIfExists(mrecAdView)
+                } catch (e: Exception) {
+                    e.printStackTrace()
+                }
             }
+
+            mrecAdView?.destroy()
+            mrecAdView = null
+            adIntances[placementId] = null
+
+        } catch (e: Exception) {
+            Log.e("AdmobAds", e.message ?: "")
         }
-
-        mrecAdView?.destroy()
-        mrecAdView = null
-        adIntances[placementId] = null
-
     }
 
 
