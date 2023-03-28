@@ -26,6 +26,7 @@ class SimpleAdManager {
 
     companion object {
         var DEFAULT_PLACEMENT_GROUPCODE = "default"
+        var DEFAULT_INTERSTITIAL_SHOWN_WHERE_NAME = "defaultPlace"
     }
 
     var testMode: Boolean = false
@@ -286,7 +287,7 @@ class SimpleAdManager {
 
     @JvmOverloads
     fun loadAndShowInterstitial(
-        activity: Activity, shownWhere: String = "defaultPlace", placementGroupCode: String = DEFAULT_PLACEMENT_GROUPCODE,
+        activity: Activity, shownWhere: String = DEFAULT_INTERSTITIAL_SHOWN_WHERE_NAME, placementGroupCode: String = DEFAULT_PLACEMENT_GROUPCODE,
         listener: AdPlatformShowListener? = null, platformType: AdPlatformTypeEnum? = null
     ) {
 
@@ -318,7 +319,7 @@ class SimpleAdManager {
 
     @JvmOverloads
     fun showInterstitialForTimeStrategy(
-        activity: Activity, shownWhere: String = "defaultPlace", placementGroupCode: String = DEFAULT_PLACEMENT_GROUPCODE,
+        activity: Activity, shownWhere: String = DEFAULT_INTERSTITIAL_SHOWN_WHERE_NAME, placementGroupCode: String = DEFAULT_PLACEMENT_GROUPCODE,
         listener: AdPlatformShowListener? = null,
         platformType: AdPlatformTypeEnum? = null, loadAndShowIfNotExistsAdsOnAutoloadMode: Boolean = true
     ) {
@@ -341,7 +342,7 @@ class SimpleAdManager {
 
     @JvmOverloads
     fun showInterstitial(
-        activity: Activity, shownWhere: String = "defaultPlace", placementGroupCode: String = DEFAULT_PLACEMENT_GROUPCODE,
+        activity: Activity, shownWhere: String = DEFAULT_INTERSTITIAL_SHOWN_WHERE_NAME, placementGroupCode: String = DEFAULT_PLACEMENT_GROUPCODE,
         listener: AdPlatformShowListener? = null,
         platformType: AdPlatformTypeEnum? = null, loadAndShowIfNotExistsAdsOnAutoloadMode: Boolean = true
     ) {
@@ -360,7 +361,7 @@ class SimpleAdManager {
 
     // load edilmiş reklamı göstermeye çalışır.
     private fun _showInterstitial(
-        activity: Activity, shownWhere: String = "defaultPlace", placementGroupCode: String = DEFAULT_PLACEMENT_GROUPCODE,
+        activity: Activity, shownWhere: String = DEFAULT_INTERSTITIAL_SHOWN_WHERE_NAME, placementGroupCode: String = DEFAULT_PLACEMENT_GROUPCODE,
         listener: AdPlatformShowListener? = null,
         platformType: AdPlatformTypeEnum? = null, loadAndShowIfNotExistsAdsOnAutoloadMode: Boolean = false
     ): Boolean {
@@ -621,7 +622,7 @@ class SimpleAdManager {
 
     @JvmOverloads
     fun loadAndShowRewarded(
-        activity: Activity, shownWhere: String = "defaultPlace", placementGroupCode: String = DEFAULT_PLACEMENT_GROUPCODE,
+        activity: Activity, shownWhere: String = DEFAULT_INTERSTITIAL_SHOWN_WHERE_NAME, placementGroupCode: String = DEFAULT_PLACEMENT_GROUPCODE,
         listener: AdPlatformShowListener? = null, platformType: AdPlatformTypeEnum? = null
     ) {
         /*
@@ -644,7 +645,7 @@ class SimpleAdManager {
 
     @JvmOverloads
     fun showRewarded(
-        activity: Activity, shownWhere: String = "defaultPlace", placementGroupCode: String = DEFAULT_PLACEMENT_GROUPCODE,
+        activity: Activity, shownWhere: String = DEFAULT_INTERSTITIAL_SHOWN_WHERE_NAME, placementGroupCode: String = DEFAULT_PLACEMENT_GROUPCODE,
         listener: AdPlatformShowListener? = null,
         platformType: AdPlatformTypeEnum? = null, loadAndShowIfNotExistsAdsOnAutoloadMode: Boolean = true
     ) {
@@ -665,7 +666,7 @@ class SimpleAdManager {
     }
 
     fun _showRewarded(
-        activity: Activity, shownWhere: String = "defaultPlace", placementGroupCode: String,
+        activity: Activity, shownWhere: String = DEFAULT_INTERSTITIAL_SHOWN_WHERE_NAME, placementGroupCode: String,
         listener: AdPlatformShowListener? = null,
         platformType: AdPlatformTypeEnum? = null
     ): Boolean {
