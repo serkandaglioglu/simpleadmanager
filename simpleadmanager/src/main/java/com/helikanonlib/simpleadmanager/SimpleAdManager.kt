@@ -24,6 +24,10 @@ fun CharSequence.splitIgnoreEmpty(vararg delimiters: String): List<String> {
 
 class SimpleAdManager {
 
+    companion object {
+        var DEFAULT_PLACEMENT_GROUPCODE = "default"
+    }
+
     var testMode: Boolean = false
     var deviceId: String = ""
     var showAds: Boolean = true
@@ -45,7 +49,6 @@ class SimpleAdManager {
     var lastShowDateByAdFormat = mutableMapOf<AdFormatEnum, Date>()
 
     // PLACEMENT GROUPS
-    var defaultPlacementGroupCode = "default"
     var placementGroups: MutableList<AdPlacementGroup> = mutableListOf()
     fun getPlacementGroupByCodeAndPlatform(placementGroupCode: String, platformTypeEnum: AdPlatformTypeEnum): AdPlacementGroup? {
         var pg: AdPlacementGroup? = null
@@ -195,7 +198,7 @@ class SimpleAdManager {
     // ################################### INTERSTITIAL ###############################
     // ################################################################################
     @JvmOverloads
-    fun loadInterstitial(activity: Activity, placementGroupCode: String = defaultPlacementGroupCode, listener: AdPlatformLoadListener? = null, platformType: AdPlatformTypeEnum? = null, parallel: Boolean = false) {
+    fun loadInterstitial(activity: Activity, placementGroupCode: String = DEFAULT_PLACEMENT_GROUPCODE, listener: AdPlatformLoadListener? = null, platformType: AdPlatformTypeEnum? = null, parallel: Boolean = false) {
         if (!showAds) return
 
         if (platformType == null) {
@@ -283,7 +286,7 @@ class SimpleAdManager {
 
     @JvmOverloads
     fun loadAndShowInterstitial(
-        activity: Activity, shownWhere: String = "defaultPlace", placementGroupCode: String = defaultPlacementGroupCode,
+        activity: Activity, shownWhere: String = "defaultPlace", placementGroupCode: String = DEFAULT_PLACEMENT_GROUPCODE,
         listener: AdPlatformShowListener? = null, platformType: AdPlatformTypeEnum? = null
     ) {
 
@@ -315,7 +318,7 @@ class SimpleAdManager {
 
     @JvmOverloads
     fun showInterstitialForTimeStrategy(
-        activity: Activity, shownWhere: String = "defaultPlace", placementGroupCode: String = defaultPlacementGroupCode,
+        activity: Activity, shownWhere: String = "defaultPlace", placementGroupCode: String = DEFAULT_PLACEMENT_GROUPCODE,
         listener: AdPlatformShowListener? = null,
         platformType: AdPlatformTypeEnum? = null, loadAndShowIfNotExistsAdsOnAutoloadMode: Boolean = true
     ) {
@@ -338,7 +341,7 @@ class SimpleAdManager {
 
     @JvmOverloads
     fun showInterstitial(
-        activity: Activity, shownWhere: String = "defaultPlace", placementGroupCode: String = defaultPlacementGroupCode,
+        activity: Activity, shownWhere: String = "defaultPlace", placementGroupCode: String = DEFAULT_PLACEMENT_GROUPCODE,
         listener: AdPlatformShowListener? = null,
         platformType: AdPlatformTypeEnum? = null, loadAndShowIfNotExistsAdsOnAutoloadMode: Boolean = true
     ) {
@@ -357,7 +360,7 @@ class SimpleAdManager {
 
     // load edilmiş reklamı göstermeye çalışır.
     private fun _showInterstitial(
-        activity: Activity, shownWhere: String = "defaultPlace", placementGroupCode: String = defaultPlacementGroupCode,
+        activity: Activity, shownWhere: String = "defaultPlace", placementGroupCode: String = DEFAULT_PLACEMENT_GROUPCODE,
         listener: AdPlatformShowListener? = null,
         platformType: AdPlatformTypeEnum? = null, loadAndShowIfNotExistsAdsOnAutoloadMode: Boolean = false
     ): Boolean {
@@ -471,7 +474,7 @@ class SimpleAdManager {
         return hasLoadedInterstitial
     }
 
-    fun hasLoadedInterstitial(placementGroupCode: String = defaultPlacementGroupCode, platformType: AdPlatformTypeEnum? = null): Boolean {
+    fun hasLoadedInterstitial(placementGroupCode: String = DEFAULT_PLACEMENT_GROUPCODE, platformType: AdPlatformTypeEnum? = null): Boolean {
         var hasLoaded = false
 
         val interstitialAdPlatforms = _getAdPlatformsWithSortedByAdFormat(placementGroupCode, AdFormatEnum.INTERSTITIAL)
@@ -499,7 +502,7 @@ class SimpleAdManager {
     // ################################################################################
     // ################################### REWARDED ###################################
     // ################################################################################
-    fun hasLoadedRewarded(placementGroupCode: String = defaultPlacementGroupCode, platformType: AdPlatformTypeEnum?): Boolean {
+    fun hasLoadedRewarded(placementGroupCode: String = DEFAULT_PLACEMENT_GROUPCODE, platformType: AdPlatformTypeEnum?): Boolean {
         var hasLoaded = false
 
         val rewardedAdPlatforms = _getAdPlatformsWithSortedByAdFormat(placementGroupCode, AdFormatEnum.REWARDED)
@@ -524,7 +527,7 @@ class SimpleAdManager {
 
     @JvmOverloads
     fun loadRewarded(
-        activity: Activity, placementGroupCode: String = defaultPlacementGroupCode, listener: AdPlatformLoadListener? = null,
+        activity: Activity, placementGroupCode: String = DEFAULT_PLACEMENT_GROUPCODE, listener: AdPlatformLoadListener? = null,
         platformType: AdPlatformTypeEnum? = null, parallel: Boolean = false
     ) {
         if (!showAds) return
@@ -559,7 +562,7 @@ class SimpleAdManager {
     }
 
 
-    private fun _loadRewardedFromFirstAvailable(activity: Activity, placementGroupCode: String = defaultPlacementGroupCode, listener: AdPlatformLoadListener? = null, index: Int = 0) {
+    private fun _loadRewardedFromFirstAvailable(activity: Activity, placementGroupCode: String = DEFAULT_PLACEMENT_GROUPCODE, listener: AdPlatformLoadListener? = null, index: Int = 0) {
 
         val rewardedAdPlatforms = _getAdPlatformsWithSortedByAdFormat(placementGroupCode, AdFormatEnum.REWARDED)
         if (index >= rewardedAdPlatforms.size) {
@@ -618,7 +621,7 @@ class SimpleAdManager {
 
     @JvmOverloads
     fun loadAndShowRewarded(
-        activity: Activity, shownWhere: String = "defaultPlace", placementGroupCode: String = defaultPlacementGroupCode,
+        activity: Activity, shownWhere: String = "defaultPlace", placementGroupCode: String = DEFAULT_PLACEMENT_GROUPCODE,
         listener: AdPlatformShowListener? = null, platformType: AdPlatformTypeEnum? = null
     ) {
         /*
@@ -641,7 +644,7 @@ class SimpleAdManager {
 
     @JvmOverloads
     fun showRewarded(
-        activity: Activity, shownWhere: String = "defaultPlace", placementGroupCode: String = defaultPlacementGroupCode,
+        activity: Activity, shownWhere: String = "defaultPlace", placementGroupCode: String = DEFAULT_PLACEMENT_GROUPCODE,
         listener: AdPlatformShowListener? = null,
         platformType: AdPlatformTypeEnum? = null, loadAndShowIfNotExistsAdsOnAutoloadMode: Boolean = true
     ) {
@@ -758,7 +761,7 @@ class SimpleAdManager {
     @JvmOverloads
     fun showBanner(
         activity: Activity, containerView: RelativeLayout, listener: AdPlatformShowListener? = null,
-        placementGroupCode: String = defaultPlacementGroupCode, platformType: AdPlatformTypeEnum? = null
+        placementGroupCode: String = DEFAULT_PLACEMENT_GROUPCODE, platformType: AdPlatformTypeEnum? = null
     ) {
         if (!showAds) return
 
@@ -798,7 +801,7 @@ class SimpleAdManager {
     }
 
     private fun _showBannerFromFirstAvailable(
-        activity: Activity, placementGroupCode: String = defaultPlacementGroupCode, containerView: RelativeLayout,
+        activity: Activity, placementGroupCode: String = DEFAULT_PLACEMENT_GROUPCODE, containerView: RelativeLayout,
         listener: AdPlatformShowListener? = null, platformIndex: Int = 0
     ) {
         val bannerAdPlatforms = _getAdPlatformsWithSortedByAdFormat(placementGroupCode, AdFormatEnum.BANNER)
@@ -853,7 +856,7 @@ class SimpleAdManager {
     @JvmOverloads
     fun showMrec(
         activity: Activity, containerView: RelativeLayout, listener: AdPlatformShowListener? = null,
-        placementGroupCode: String = defaultPlacementGroupCode, platformType: AdPlatformTypeEnum? = null
+        placementGroupCode: String = DEFAULT_PLACEMENT_GROUPCODE, platformType: AdPlatformTypeEnum? = null
     ) {
         if (!showAds) return
 
@@ -893,7 +896,7 @@ class SimpleAdManager {
     }
 
     private fun _showMrecFromFirstAvailable(
-        activity: Activity, placementGroupCode: String = defaultPlacementGroupCode, containerView: RelativeLayout,
+        activity: Activity, placementGroupCode: String = DEFAULT_PLACEMENT_GROUPCODE, containerView: RelativeLayout,
         listener: AdPlatformShowListener? = null, platformIndex: Int = 0
     ) {
         val mrecAdPlatforms = _getAdPlatformsWithSortedByAdFormat(placementGroupCode, AdFormatEnum.MREC)
@@ -985,7 +988,7 @@ class SimpleAdManager {
     }
 
     var lastPostDelayedSetTimeForInterstitialLoad: Date? = null
-    private fun _autoloadInterstitialByHandler(activity: Activity, placementGroupCode: String = defaultPlacementGroupCode, listener: AdPlatformLoadListener? = null, platformType: AdPlatformTypeEnum? = null) {
+    private fun _autoloadInterstitialByHandler(activity: Activity, placementGroupCode: String = DEFAULT_PLACEMENT_GROUPCODE, listener: AdPlatformLoadListener? = null, platformType: AdPlatformTypeEnum? = null) {
 
         if (!isHandlerAvailableForLoads) {
             try {
@@ -1039,7 +1042,7 @@ class SimpleAdManager {
     }
 
     var lastPostDelayedSetTimeForRewardedLoad: Date? = null
-    private fun _autoloadRewardedByHandler(activity: Activity, placementGroupCode: String = defaultPlacementGroupCode, listener: AdPlatformLoadListener? = null, platformType: AdPlatformTypeEnum? = null) {
+    private fun _autoloadRewardedByHandler(activity: Activity, placementGroupCode: String = DEFAULT_PLACEMENT_GROUPCODE, listener: AdPlatformLoadListener? = null, platformType: AdPlatformTypeEnum? = null) {
 
         if (!isHandlerAvailableForLoads) {
             try {
@@ -1136,7 +1139,7 @@ class SimpleAdManager {
 
 
     // AD SHOWING VIEW
-    var isEnableShowLoadingViewForInterstitial:Boolean = true
+    var isEnableShowLoadingViewForInterstitial: Boolean = true
     var loadingView: AdLoadingCustomView? = null
     fun initLoadingView(activity: Activity, rootView: ViewGroup? = null) {
         if (loadingView != null) {
@@ -1252,27 +1255,27 @@ class SimpleAdManager {
     // ################################### NATIVE ######################################
     // ################################################################################
     @JvmOverloads
-    fun loadSmallNativeAds(activity: Activity, count: Int, listener: AdPlatformLoadListener? = null, placementGroupCode: String = defaultPlacementGroupCode) {
+    fun loadSmallNativeAds(activity: Activity, count: Int, listener: AdPlatformLoadListener? = null, placementGroupCode: String = DEFAULT_PLACEMENT_GROUPCODE) {
         if (!showAds) return
 
         _loadNativeFromAllNetworks(activity, AdFormatEnum.NATIVE_SMALL, count, listener, placementGroupCode)
     }
 
     @JvmOverloads
-    fun loadMediumNativeAds(activity: Activity, count: Int, listener: AdPlatformLoadListener? = null, placementGroupCode: String = defaultPlacementGroupCode) {
+    fun loadMediumNativeAds(activity: Activity, count: Int, listener: AdPlatformLoadListener? = null, placementGroupCode: String = DEFAULT_PLACEMENT_GROUPCODE) {
         if (!showAds) return
 
         _loadNativeFromAllNetworks(activity, AdFormatEnum.NATIVE_MEDIUM, count, listener, placementGroupCode)
     }
 
     @JvmOverloads
-    fun loadNativeAds(activity: Activity, nativeAdFormat: AdFormatEnum, count: Int, listener: AdPlatformLoadListener? = null, placementGroupCode: String = defaultPlacementGroupCode) {
+    fun loadNativeAds(activity: Activity, nativeAdFormat: AdFormatEnum, count: Int, listener: AdPlatformLoadListener? = null, placementGroupCode: String = DEFAULT_PLACEMENT_GROUPCODE) {
         if (!showAds) return
 
         _loadNativeFromAllNetworks(activity, nativeAdFormat, count, listener, placementGroupCode)
     }
 
-    private fun _loadNativeFromAllNetworks(activity: Activity, nativeAdFormat: AdFormatEnum, count: Int, listener: AdPlatformLoadListener? = null, placementGroupCode: String = defaultPlacementGroupCode) {
+    private fun _loadNativeFromAllNetworks(activity: Activity, nativeAdFormat: AdFormatEnum, count: Int, listener: AdPlatformLoadListener? = null, placementGroupCode: String = DEFAULT_PLACEMENT_GROUPCODE) {
         val nativeAdPlatforms = _getAdPlatformsWithSortedByAdFormat(placementGroupCode, nativeAdFormat)
         if (nativeAdPlatforms.size == 0) {
             return
@@ -1303,7 +1306,7 @@ class SimpleAdManager {
     }
 
     var lastShowedAdNetworkForNativeAds: MutableMap<String, AdPlatformWrapper> = mutableMapOf()
-    fun showNative(activity: Activity, nativeAdFormat: AdFormatEnum, containerView: ViewGroup, listener: AdPlatformShowListener? = null, placementGroupCode: String = defaultPlacementGroupCode): Boolean {
+    fun showNative(activity: Activity, nativeAdFormat: AdFormatEnum, containerView: ViewGroup, listener: AdPlatformShowListener? = null, placementGroupCode: String = DEFAULT_PLACEMENT_GROUPCODE): Boolean {
         val nativeAdPlatforms = _getAdPlatformsWithSortedByAdFormat(placementGroupCode, nativeAdFormat)
         if (nativeAdPlatforms.size == 0) {
             return false
@@ -1383,11 +1386,11 @@ class SimpleAdManager {
     }
 
 
-    fun hasLoadedNativeAds(activity: Activity, nativeAdFormat: AdFormatEnum, placementGroupCode: String = defaultPlacementGroupCode): Boolean {
+    fun hasLoadedNativeAds(activity: Activity, nativeAdFormat: AdFormatEnum, placementGroupCode: String = DEFAULT_PLACEMENT_GROUPCODE): Boolean {
         return getLoadedNativeAdsCount(activity, nativeAdFormat) > 0
     }
 
-    fun getLoadedNativeAdsCount(activity: Activity, nativeAdFormat: AdFormatEnum, placementGroupCode: String = defaultPlacementGroupCode): Int {
+    fun getLoadedNativeAdsCount(activity: Activity, nativeAdFormat: AdFormatEnum, placementGroupCode: String = DEFAULT_PLACEMENT_GROUPCODE): Int {
         var count = 0
         val nativeAdPlatforms = _getAdPlatformsWithSortedByAdFormat(placementGroupCode, nativeAdFormat)
         if (nativeAdPlatforms.size == 0) {

@@ -35,10 +35,10 @@ class MyApplication : Application() {
             testMode = BuildConfig.DEBUG
             deviceId = "47088e48-5195-4757-90b2-0da94116befd" // necessary if testmode enabled
 
-            defaultPlacementGroupCode = "default"
+
             placementGroups = mutableListOf(
                 AdPlacementGroup(
-                    groupCode = "default",
+                    groupCode = SimpleAdManager.DEFAULT_PLACEMENT_GROUPCODE,
                     platformType = AdPlatformTypeEnum.ADMOB,
                     interstitial = "ca-app-pub-3940256099942544/1033173712",
                     rewarded = "ca-app-pub-3940256099942544/5224354917",
@@ -49,7 +49,7 @@ class MyApplication : Application() {
                     appOpenAd = "ca-app-pub-3940256099942544/3419835294",
                 ),
                 AdPlacementGroup(
-                    groupCode = "default",
+                    groupCode = SimpleAdManager.DEFAULT_PLACEMENT_GROUPCODE,
                     platformType = AdPlatformTypeEnum.APPLOVIN,
                     interstitial = "7c4a01242eaee289",
                     rewarded = "f2f5534658a6b4ab",
@@ -60,7 +60,7 @@ class MyApplication : Application() {
                     appOpenAd = "dd9249369deec4ec"
                 ),
                 AdPlacementGroup(
-                    groupCode = "default",
+                    groupCode = SimpleAdManager.DEFAULT_PLACEMENT_GROUPCODE,
                     platformType = AdPlatformTypeEnum.IRONSOURCE,
                     interstitial = "DefaultInterstitial",
                     rewarded = "DefaultRewardedVideo",
@@ -92,13 +92,13 @@ class MyApplication : Application() {
         }
 
         // default placement group
-        adManager.setAdPlatformSortByAdFormatStr("default", AdFormatEnum.INTERSTITIAL.name, "applovin,admob")
-        adManager.setAdPlatformSortByAdFormatStr("default", AdFormatEnum.REWARDED.name, "applovin,admob")
-        adManager.setAdPlatformSortByAdFormatStr("default", AdFormatEnum.BANNER.name, "applovin,admob")
-        adManager.setAdPlatformSortByAdFormatStr("default", AdFormatEnum.MREC.name, "applovin,admob")
-        adManager.setAdPlatformSortByAdFormatStr("default", AdFormatEnum.NATIVE_SMALL.name, "applovin,admob")
-        adManager.setAdPlatformSortByAdFormatStr("default", AdFormatEnum.NATIVE_MEDIUM.name, "applovin,admob")
-        adManager.setAdPlatformSortByAdFormatStr("default", AdFormatEnum.APP_OPEN.name, "applovin,admob")
+        adManager.setAdPlatformSortByAdFormatStr(SimpleAdManager.DEFAULT_PLACEMENT_GROUPCODE, AdFormatEnum.INTERSTITIAL.name, "applovin,admob")
+        adManager.setAdPlatformSortByAdFormatStr(SimpleAdManager.DEFAULT_PLACEMENT_GROUPCODE, AdFormatEnum.REWARDED.name, "applovin,admob")
+        adManager.setAdPlatformSortByAdFormatStr(SimpleAdManager.DEFAULT_PLACEMENT_GROUPCODE, AdFormatEnum.BANNER.name, "applovin,admob")
+        adManager.setAdPlatformSortByAdFormatStr(SimpleAdManager.DEFAULT_PLACEMENT_GROUPCODE, AdFormatEnum.MREC.name, "applovin,admob")
+        adManager.setAdPlatformSortByAdFormatStr(SimpleAdManager.DEFAULT_PLACEMENT_GROUPCODE, AdFormatEnum.NATIVE_SMALL.name, "applovin,admob")
+        adManager.setAdPlatformSortByAdFormatStr(SimpleAdManager.DEFAULT_PLACEMENT_GROUPCODE, AdFormatEnum.NATIVE_MEDIUM.name, "applovin,admob")
+        adManager.setAdPlatformSortByAdFormatStr(SimpleAdManager.DEFAULT_PLACEMENT_GROUPCODE, AdFormatEnum.APP_OPEN.name, "applovin,admob")
 
 
         adManager.isEnableShowLoadingViewForInterstitial = false
