@@ -53,7 +53,11 @@ abstract class AdPlatformWrapper(open var appId: String) {
 
     protected fun _removeBannerViewIfExists(bannerAdView: ViewGroup?, containerView: ViewGroup? = null): Boolean {
         if (_isBannerLoaded(bannerAdView)) {
-            (bannerAdView?.parent as ViewGroup).removeView(bannerAdView)
+            try {
+                (bannerAdView?.parent as ViewGroup).removeView(bannerAdView)
+            } catch (e: Exception) {
+                e.printStackTrace()
+            }
             return true
         }
 
