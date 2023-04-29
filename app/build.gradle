@@ -11,14 +11,14 @@ applovin {
 
 android {
     namespace 'com.helikanonlibsample.simple_admanager'
-    compileSdk 32
+    compileSdk 33
 
     defaultConfig {
         applicationId "com.helikanonlibsample.simple_admanager"
         minSdk 23
-        targetSdk 32
-        versionCode 15
-        versionName "1.1.5"
+        targetSdk 33
+        versionCode 16
+        versionName "1.1.6"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
 
@@ -60,7 +60,7 @@ android {
 dependencies {
 
     implementation 'androidx.core:core-ktx:1.8.0'
-    implementation 'androidx.appcompat:appcompat:1.5.1'
+    implementation 'androidx.appcompat:appcompat:1.6.1'
     implementation 'com.google.android.material:material:1.8.0'
     implementation 'androidx.constraintlayout:constraintlayout:2.1.4'
     testImplementation 'junit:junit:4.13.2'
@@ -68,6 +68,6 @@ dependencies {
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.5.1'
 
 
-    implementation 'com.google.android.gms:play-services-ads:21.5.0'
+    implementation 'com.google.android.gms:play-services-ads:22.0.0'
     implementation project(path: ':simpleadmanager')
 }
