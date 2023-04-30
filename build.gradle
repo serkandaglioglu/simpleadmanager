@@ -10,6 +10,8 @@ buildscript {
 
     repositories {
         google()
+        mavenCentral()
+        gradlePluginPortal()
         jcenter()
 
         maven { url 'https://artifacts.applovin.com/android' }
