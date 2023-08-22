@@ -69,10 +69,10 @@
             android:name="com.facebook.sdk.ApplicationId"
             android:value="${facebookAppId}" />-->
 
-        <activity
+        <!--<activity
             android:name="com.facebook.ads.AudienceNetworkActivity"
             android:configChanges="keyboardHidden|orientation|screenSize"
-            android:hardwareAccelerated="true" />
+            android:hardwareAccelerated="true" />-->
         <!--facebook-->
 
         <!-- unityads -->

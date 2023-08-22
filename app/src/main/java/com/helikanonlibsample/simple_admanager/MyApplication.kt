@@ -156,7 +156,7 @@ class MyApplication : Application() {
                 AdPlatformTypeEnum.ADMOB to "ca-app-pub-3940256099942544/3419835294",
                 AdPlatformTypeEnum.APPLOVIN to "dd9249369deec4ec",
             ),
-            "applovin,admob",
+            "admob,applovin",
 
             object : AdPlatformShowListener() {
                 override fun onDisplayed(adPlatformEnum: AdPlatformTypeEnum?) {
