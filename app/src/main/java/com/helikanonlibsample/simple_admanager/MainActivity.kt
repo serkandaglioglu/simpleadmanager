@@ -47,7 +47,7 @@ class MainActivity : AppCompatActivity() {
 
     fun initViews() {
         binding.btnShowInterstitial.setOnClickListener {
-            MyApplication.adManager.showInterstitial(this, "default", "defaultPlace", object : AdPlatformShowListener() {
+            MyApplication.adManager.showInterstitial(this, "defaultPlace", "default", object : AdPlatformShowListener() {
                 override fun onDisplayed(adPlatformEnum: AdPlatformTypeEnum?) {
                     super.onDisplayed(adPlatformEnum)
                 }
@@ -72,7 +72,7 @@ class MainActivity : AppCompatActivity() {
         }
 
         binding.btnShowRewarded.setOnClickListener {
-            MyApplication.adManager.showRewarded(this, "default", "defaultPlace", object : AdPlatformShowListener() {
+            MyApplication.adManager.showRewarded(this, "defaultPlace", "default", object : AdPlatformShowListener() {
                 override fun onRewarded(type: String?, amount: Int?, adPlatformEnum: AdPlatformTypeEnum?) {
                     super.onRewarded(type, amount, adPlatformEnum)
                 }

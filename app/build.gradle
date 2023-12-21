@@ -1,6 +1,6 @@
 plugins {
     id 'com.android.application'
-    id 'org.jetbrains.kotlin.android'
+    id 'kotlin-android'
     id 'kotlin-kapt'
     id 'applovin-quality-service'
 }
@@ -17,8 +17,8 @@ android {
         applicationId "com.helikanonlibsample.simple_admanager"
         minSdk 23
         targetSdk 33
-        versionCode 21
-        versionName "1.2.1"
+        versionCode 22
+        versionName "1.2.2"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
 

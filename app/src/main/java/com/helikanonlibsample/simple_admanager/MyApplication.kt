@@ -46,7 +46,7 @@ class MyApplication : Application() {
                     mrec = "ca-app-pub-3940256099942544/6300978111",
                     nativeSmall = "ca-app-pub-3940256099942544/2247696110",
                     nativeMedium = "",
-                    appOpenAd = "ca-app-pub-3940256099942544/3419835294",
+                    appOpenAd = "ca-app-pub-3940256099942544/9257395921",
                 ),
                 AdPlacementGroup(
                     groupCode = SimpleAdManager.DEFAULT_PLACEMENT_GROUPCODE,
@@ -153,7 +153,7 @@ class MyApplication : Application() {
         admobAppOpenAdManager = AppOpenAdManager(
             this,
             mutableMapOf(
-                AdPlatformTypeEnum.ADMOB to "ca-app-pub-3940256099942544/3419835294",
+                AdPlatformTypeEnum.ADMOB to "ca-app-pub-3940256099942544/9257395921",
                 AdPlatformTypeEnum.APPLOVIN to "dd9249369deec4ec",
             ),
             "admob,applovin",
