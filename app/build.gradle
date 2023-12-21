@@ -17,8 +17,8 @@ android {
         applicationId "com.helikanonlibsample.simple_admanager"
         minSdk 23
         targetSdk 33
-        versionCode 18
-        versionName "1.1.8"
+        versionCode 19
+        versionName "1.1.9"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
 
@@ -68,6 +68,6 @@ dependencies {
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.5.1'
 
 
-    implementation 'com.google.android.gms:play-services-ads:22.2.0'
+    implementation 'com.google.android.gms:play-services-ads:22.6.0'
     implementation project(path: ':simpleadmanager')
 }
