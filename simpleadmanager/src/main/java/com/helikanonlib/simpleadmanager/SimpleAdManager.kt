@@ -310,8 +310,6 @@ class SimpleAdManager {
                 if (errorMode == AdErrorMode.MANAGER) {
                     _showInterstitial(activity, shownWhere, placementGroupCode, listener, platformType, false)
                 }
-
-
             }
         }
         loadInterstitial(activity, placementGroupCode, loadListener, platformType, false)
@@ -382,7 +380,7 @@ class SimpleAdManager {
 
                 // on close load new one for next show
                 if (autoLoadForInterstitial) {
-                    _autoloadInterstitialByHandler(activity, placementGroupCode, null, platformType)
+                    _autoloadInterstitialByHandler(activity, placementGroupCode, null, null)
                 }
             }
 
@@ -419,7 +417,7 @@ class SimpleAdManager {
                         stopAutoloadInterstitialHandler()
                         loadAndShowInterstitial(activity, shownWhere, placementGroupCode, listener, platformType)
                     } else {
-                        _autoloadInterstitialByHandler(activity, placementGroupCode, null, platformType)
+                        _autoloadInterstitialByHandler(activity, placementGroupCode, null, null)
 
                         globalInterstitialShowListener?.onError(errorMode, errorMessage, adPlatformEnum)
                         // listener?.onError(errorMode, errorMessage, adPlatformEnum) // call for adplatform
