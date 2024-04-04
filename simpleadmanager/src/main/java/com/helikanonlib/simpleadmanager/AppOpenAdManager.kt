@@ -65,7 +65,7 @@ class AppOpenAdManager(
     }*/
 
     // @OnLifecycleEvent(Lifecycle.Event.ON_START)
-    @OnLifecycleEvent(Lifecycle.Event.ON_RESUME)
+    @OnLifecycleEvent(Lifecycle.Event.ON_START)
     public fun onStart() {
         if (!isEnable) return
 
