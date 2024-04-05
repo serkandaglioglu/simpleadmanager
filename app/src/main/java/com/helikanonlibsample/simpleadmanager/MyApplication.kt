@@ -92,7 +92,7 @@ class MyApplication : Application() {
         }
 
         // default placement group
-        adManager.setAdPlatformSortByAdFormatStr(SimpleAdManager.DEFAULT_PLACEMENT_GROUPCODE, AdFormatEnum.INTERSTITIAL.name, "applovin,admob")
+        adManager.setAdPlatformSortByAdFormatStr(SimpleAdManager.DEFAULT_PLACEMENT_GROUPCODE, AdFormatEnum.INTERSTITIAL.name, "admob,applovin")
         adManager.setAdPlatformSortByAdFormatStr(SimpleAdManager.DEFAULT_PLACEMENT_GROUPCODE, AdFormatEnum.REWARDED.name, "applovin,admob")
         adManager.setAdPlatformSortByAdFormatStr(SimpleAdManager.DEFAULT_PLACEMENT_GROUPCODE, AdFormatEnum.BANNER.name, "applovin,admob")
         adManager.setAdPlatformSortByAdFormatStr(SimpleAdManager.DEFAULT_PLACEMENT_GROUPCODE, AdFormatEnum.MREC.name, "applovin,admob")

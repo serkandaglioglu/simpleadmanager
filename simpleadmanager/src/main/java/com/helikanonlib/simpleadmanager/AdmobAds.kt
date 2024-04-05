@@ -38,6 +38,10 @@ class AdmobAds(override var appId: String) : AdPlatformWrapper(appId) {
         if (testMode) {
             enableTestMode(context, null)
         }
+
+        /*val x = context.packageManager.getApplicationInfo(context.packageName, PackageManager.GET_META_DATA)
+        val y = x.metaData.getString("com.google.android.gms.ads.APPLICATION_ID")
+        val aasdfa = 4+4*/
     }
 
     override fun enableTestMode(context: Context, deviceId: String?) {

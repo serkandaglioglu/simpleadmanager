@@ -4,9 +4,11 @@ plugins {
     alias(libs.plugins.jetbrainsKotlinAndroid) apply false
     alias(libs.plugins.androidLibrary) apply false
 
-    id("com.google.gms.google-services") version "4.4.0" apply false
-}
+    id("com.google.gms.google-services") version "4.4.1" apply false
 
+    // id ("com.applovin.quality.AppLovinQualityServiceGradlePlugin") version "5.1.2" apply false
+
+}
 
 buildscript {
     repositories {

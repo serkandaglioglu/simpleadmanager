@@ -10,7 +10,7 @@ publishing{
         register<MavenPublication>("release"){
             groupId = "com.helikanonlib"
             artifactId = "simpleadmanager"
-            version = "1.2.6"
+            version = "1.2.7"
 
             afterEvaluate {
                 from(components["release"])
@@ -28,6 +28,8 @@ android {
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         consumerProguardFiles("consumer-rules.pro")
+
+        manifestPlaceholders["admobAppId"] = "\${admobAppId}"
     }
 
     buildTypes {
