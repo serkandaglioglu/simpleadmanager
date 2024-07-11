@@ -86,8 +86,7 @@ class MyApplication : Application() {
 
             adPlatforms = mutableListOf<AdPlatformWrapper>(
                 AdmobAds("ca-app-pub-3940256099942544~3347511713"),
-                ApplovinAds("noneed"),
-                IronSourceAds("cd353905")
+                ApplovinAds("noneed")
             )
         }
 
