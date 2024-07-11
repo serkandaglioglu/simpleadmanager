@@ -17,8 +17,8 @@ android {
         applicationId = "com.helikanonlibsample.simpleadmanager"
         minSdk = 24
         targetSdk = 34
-        versionCode = 26
-        versionName = "1.2.7"
+        versionCode = 28
+        versionName = "1.2.8"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
 
@@ -60,6 +60,6 @@ dependencies {
 
 
     implementation("androidx.recyclerview:recyclerview:1.3.2")
-    implementation("com.google.android.gms:play-services-ads:22.6.0")
+    implementation("com.google.android.gms:play-services-ads:23.2.0")
     implementation(project(":simpleadmanager"))
 }

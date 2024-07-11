@@ -10,7 +10,7 @@ publishing{
         register<MavenPublication>("release"){
             groupId = "com.helikanonlib"
             artifactId = "simpleadmanager"
-            version = "1.2.7"
+            version = "1.2.8"
 
             afterEvaluate {
                 from(components["release"])
@@ -66,24 +66,24 @@ dependencies {
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
 
-    implementation("androidx.lifecycle:lifecycle-process:2.7.0")
+    implementation("androidx.lifecycle:lifecycle-process:2.8.3")
 
     // google service
-    implementation ("com.google.android.gms:play-services-ads:22.6.0")
-    implementation ("com.google.android.gms:play-services-appset:16.0.2")
-    implementation ("com.google.android.gms:play-services-ads-identifier:18.0.1")
+    implementation ("com.google.android.gms:play-services-ads:23.2.0")
+    implementation ("com.google.android.gms:play-services-appset:16.1.0")
+    implementation ("com.google.android.gms:play-services-ads-identifier:18.1.0")
 
 
     // APPLOVIN
-    implementation("com.applovin:applovin-sdk:12.2.0")
+    implementation("com.applovin:applovin-sdk:12.5.0")
     // implementation("com.applovin.mediation:adcolony-adapter:4.8.0.4") // applovin 12.2.0 sürümünde kaldırılmıştı sitesinden
-    implementation("com.applovin.mediation:fyber-adapter:8.2.6.0")
-    implementation("com.applovin.mediation:google-adapter:22.6.0.1")
-    implementation("com.applovin.mediation:google-ad-manager-adapter:22.6.0.1")
-    implementation("com.applovin.mediation:ironsource-adapter:7.8.0.0.0")
-    implementation("com.applovin.mediation:facebook-adapter:6.16.0.2")
-    implementation("com.applovin.mediation:mintegral-adapter:16.6.51.0") // admostla beraber sorun çıkıyo
-    implementation("com.applovin.mediation:bytedance-adapter:5.8.0.7.0")
-    implementation("com.applovin.mediation:unityads-adapter:4.9.3.0")
-    implementation("com.applovin.mediation:vungle-adapter:7.1.0.0")
+    implementation("com.applovin.mediation:fyber-adapter:8.2.7.1")
+    implementation("com.applovin.mediation:google-adapter:23.2.0.0")
+    implementation("com.applovin.mediation:google-ad-manager-adapter:23.2.0.0")
+    implementation("com.applovin.mediation:ironsource-adapter:8.1.0.0.0")
+    implementation("com.applovin.mediation:facebook-adapter:6.17.0.0")
+    implementation("com.applovin.mediation:mintegral-adapter:16.7.81.0") // admostla beraber sorun çıkıyo
+    implementation("com.applovin.mediation:bytedance-adapter:5.9.1.1.0")
+    implementation("com.applovin.mediation:unityads-adapter:4.12.1.0")
+    implementation("com.applovin.mediation:vungle-adapter:7.4.0.0")
 }
