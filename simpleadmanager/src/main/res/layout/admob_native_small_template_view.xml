@@ -184,4 +184,5 @@
         </androidx.constraintlayout.widget.ConstraintLayout>
 
     </com.google.android.gms.ads.nativead.NativeAdView>
+
 </merge>

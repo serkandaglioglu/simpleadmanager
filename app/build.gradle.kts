@@ -11,14 +11,14 @@ applovin {
 
 android {
     namespace = "com.helikanonlibsample.simpleadmanager"
-    compileSdk = 34
+    compileSdk = 35
 
     defaultConfig {
         applicationId = "com.helikanonlibsample.simpleadmanager"
         minSdk = 24
-        targetSdk = 34
-        versionCode = 30
-        versionName = "1.3.0"
+        targetSdk = 35
+        versionCode = 31
+        versionName = "1.3.1"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
 
@@ -59,7 +59,7 @@ dependencies {
     androidTestImplementation(libs.androidx.espresso.core)
 
 
-    implementation("androidx.recyclerview:recyclerview:1.3.2")
-    implementation("com.google.android.gms:play-services-ads:23.2.0")
+    implementation(libs.androidx.recyclerview)
+    implementation(libs.play.services.ads)
     implementation(project(":simpleadmanager"))
 }

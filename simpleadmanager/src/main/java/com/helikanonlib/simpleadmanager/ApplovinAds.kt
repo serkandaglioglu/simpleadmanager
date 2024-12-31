@@ -13,10 +13,16 @@ import com.applovin.mediation.ads.MaxRewardedAd
 import com.applovin.mediation.nativeAds.MaxNativeAdListener
 import com.applovin.mediation.nativeAds.MaxNativeAdLoader
 import com.applovin.mediation.nativeAds.MaxNativeAdView
+import com.applovin.sdk.AppLovinMediationProvider
 import com.applovin.sdk.AppLovinSdk
 import com.applovin.sdk.AppLovinSdkConfiguration
+import com.applovin.sdk.AppLovinSdkInitializationConfiguration
 import com.applovin.sdk.AppLovinSdkUtils
 
+
+/**
+ * appId is equal with applovin SDK-key
+ */
 class ApplovinAds(override var appId: String) : AdPlatformWrapper(appId) {
 
     override var platformType = AdPlatformTypeEnum.APPLOVIN
@@ -32,8 +38,11 @@ class ApplovinAds(override var appId: String) : AdPlatformWrapper(appId) {
     override fun initialize(context: Context, testMode: Boolean) {
         if (isInitialized) return
 
-        AppLovinSdk.getInstance(context).mediationProvider = "max"
-        AppLovinSdk.getInstance(context).initializeSdk { configuration: AppLovinSdkConfiguration ->
+        val initConfig = AppLovinSdkInitializationConfiguration.builder(appId, context)
+            .setMediationProvider(AppLovinMediationProvider.MAX)
+            .build()
+
+        AppLovinSdk.getInstance(context).initialize(initConfig) { sdkConfig ->
 
         }
         isInitialized = true
@@ -215,14 +224,6 @@ class ApplovinAds(override var appId: String) : AdPlatformWrapper(appId) {
 
             }
 
-            override fun onRewardedVideoStarted(ad: MaxAd) {
-
-            }
-
-            override fun onRewardedVideoCompleted(ad: MaxAd) {
-
-            }
-
             override fun onUserRewarded(ad: MaxAd, reward: MaxReward) {
 
             }
@@ -269,14 +270,6 @@ class ApplovinAds(override var appId: String) : AdPlatformWrapper(appId) {
             override fun onAdDisplayFailed(ad: MaxAd, error: MaxError) {
                 listener?.onError(AdErrorMode.PLATFORM, "${platformType.name} rewarded show >> error code=${error?.code} / ${error?.message}", platformType)
                 adIntances[placementId] = null
-            }
-
-            override fun onRewardedVideoStarted(ad: MaxAd) {
-
-            }
-
-            override fun onRewardedVideoCompleted(ad: MaxAd) {
-
             }
 
             override fun onUserRewarded(ad: MaxAd, reward: MaxReward) {
