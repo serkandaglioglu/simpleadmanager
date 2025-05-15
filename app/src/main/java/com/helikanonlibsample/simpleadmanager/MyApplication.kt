@@ -59,17 +59,6 @@ class MyApplication : Application() {
                     nativeMedium = "96454048eeffaad2",
                     appOpenAd = "dd9249369deec4ec"
                 ),
-                AdPlacementGroup(
-                    groupCode = SimpleAdManager.DEFAULT_PLACEMENT_GROUPCODE,
-                    platformType = AdPlatformTypeEnum.IRONSOURCE,
-                    interstitial = "DefaultInterstitial",
-                    rewarded = "DefaultRewardedVideo",
-                    banner = "DefaultBanner",
-                    mrec = "MREC_BANNER",
-                    nativeSmall = "nosupportSmall",
-                    nativeMedium = "nosupportMedium",
-                    appOpenAd = "nosupport"
-                ),
 
                 AdPlacementGroup(
                     groupCode = "second",

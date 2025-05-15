@@ -10,7 +10,7 @@ publishing{
         register<MavenPublication>("release"){
             groupId = "com.helikanonlib"
             artifactId = "simpleadmanager"
-            version = "1.3.2"
+            version = "1.3.4"
 
             afterEvaluate {
                 from(components["release"])
@@ -71,15 +71,14 @@ dependencies {
 
 
     // APPLOVIN
-    implementation("com.applovin:applovin-sdk:13.0.1")
-    // implementation("com.applovin.mediation:adcolony-adapter:4.8.0.4") // applovin 12.2.0 sürümünde kaldırılmıştı sitesinden
-    implementation("com.applovin.mediation:fyber-adapter:8.3.5.0")
-    implementation("com.applovin.mediation:google-adapter:23.6.0.1")
-    implementation("com.applovin.mediation:google-ad-manager-adapter:23.6.0.1")
-    implementation("com.applovin.mediation:ironsource-adapter:8.6.1.0.0")
-    implementation("com.applovin.mediation:facebook-adapter:6.18.0.1")
-    implementation("com.applovin.mediation:mintegral-adapter:16.9.31.0") // admostla beraber sorun çıkıyo
-    implementation("com.applovin.mediation:bytedance-adapter:6.4.0.6.0")
-    implementation("com.applovin.mediation:unityads-adapter:4.13.0.0")
-    implementation("com.applovin.mediation:vungle-adapter:7.4.2.2")
+    implementation("com.applovin:applovin-sdk:+")
+    implementation("com.applovin.mediation:fyber-adapter:+")
+    implementation("com.applovin.mediation:google-ad-manager-adapter:+")
+    implementation("com.applovin.mediation:google-adapter:+")
+    implementation("com.applovin.mediation:vungle-adapter:+")
+    implementation("com.applovin.mediation:facebook-adapter:+")
+    implementation("com.applovin.mediation:mintegral-adapter:+")
+    implementation("com.applovin.mediation:bytedance-adapter:+")
+    implementation("com.applovin.mediation:unityads-adapter:+")
+
 }
