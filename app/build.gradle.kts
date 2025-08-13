@@ -11,14 +11,15 @@ applovin {
 
 android {
     namespace = "com.helikanonlibsample.simpleadmanager"
-    compileSdk = 35
+    compileSdk = 36
 
     defaultConfig {
         applicationId = "com.helikanonlibsample.simpleadmanager"
         minSdk = 24
-        targetSdk = 35
-        versionCode = 33
-        versionName = "1.3.4"
+        //noinspection OldTargetApi
+        targetSdk = 36
+        versionCode = 35
+        versionName = "1.3.5"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
 

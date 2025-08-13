@@ -10,7 +10,7 @@ publishing{
         register<MavenPublication>("release"){
             groupId = "com.helikanonlib"
             artifactId = "simpleadmanager"
-            version = "1.3.4"
+            version = "1.3.5"
 
             afterEvaluate {
                 from(components["release"])
@@ -21,7 +21,7 @@ publishing{
 
 android {
     namespace = "com.helikanonlib.simpleadmanager"
-    compileSdk = 35
+    compileSdk = 36
 
     defaultConfig {
         minSdk = 24
@@ -63,6 +63,8 @@ dependencies {
     androidTestImplementation(libs.androidx.espresso.core)
 
     implementation(libs.androidx.lifecycle.process)
+
+    implementation(libs.firebase.crashlytics.buildtools) // NativeTemplateStyle.java içinde bulunan @CanIgnoreReturnValue annotation için ekledik
 
     // google service
     implementation (libs.play.services.ads)

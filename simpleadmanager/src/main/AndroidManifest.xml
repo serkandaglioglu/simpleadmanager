@@ -39,7 +39,7 @@
         <!--facebook-->
 
         <!-- unityads -->
-        <activity
+        <!--<activity
             android:name="com.unity3d.services.ads.adunit.AdUnitActivity"
             android:configChanges="fontScale|keyboard|keyboardHidden|locale|mnc|mcc|navigation|orientation|screenLayout|screenSize|smallestScreenSize|uiMode|touchscreen"
             android:hardwareAccelerated="true"
@@ -58,8 +58,8 @@
             android:name="com.unity3d.services.ads.adunit.AdUnitSoftwareActivity"
             android:configChanges="fontScale|keyboard|keyboardHidden|locale|mnc|mcc|navigation|orientation|screenLayout|screenSize|smallestScreenSize|uiMode|touchscreen"
             android:hardwareAccelerated="false"
-            android:theme="@android:style/Theme.NoTitleBar.Fullscreen" /> <!-- unity ads -->
-
+            android:theme="@android:style/Theme.NoTitleBar.Fullscreen" /> &lt;!&ndash; unity ads &ndash;&gt;
+-->
         <!-- ADS -->
     </application>
 
