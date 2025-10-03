@@ -10,7 +10,7 @@ publishing{
         register<MavenPublication>("release"){
             groupId = "com.helikanonlib"
             artifactId = "simpleadmanager"
-            version = "1.3.5"
+            version = "1.3.6"
 
             afterEvaluate {
                 from(components["release"])
@@ -80,7 +80,15 @@ dependencies {
     implementation("com.applovin.mediation:vungle-adapter:+")
     implementation("com.applovin.mediation:facebook-adapter:+")
     implementation("com.applovin.mediation:mintegral-adapter:+")
-    implementation("com.applovin.mediation:bytedance-adapter:+")
+    implementation("com.applovin.mediation:bytedance-adapter:+"){
+        exclude(module = "tiktok-business-android-sdk-comp")
+    }
     implementation("com.applovin.mediation:unityads-adapter:+")
+
+    // inmobi begin
+    implementation("com.applovin.mediation:inmobi-adapter:+")
+    implementation("com.squareup.picasso:picasso:2.8")
+    // implementation("androidx.recyclerview:recyclerview:1.1.0") // zaten yukarıda ekli
+    // inmobi end
 
 }

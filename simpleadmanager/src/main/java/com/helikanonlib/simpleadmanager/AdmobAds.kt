@@ -8,6 +8,8 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import android.widget.RelativeLayout
 import com.google.android.gms.ads.*
+import com.google.android.gms.ads.initialization.InitializationStatus
+import com.google.android.gms.ads.initialization.OnInitializationCompleteListener
 import com.google.android.gms.ads.interstitial.InterstitialAd
 import com.google.android.gms.ads.interstitial.InterstitialAdLoadCallback
 import com.google.android.gms.ads.nativead.NativeAd
@@ -16,6 +18,9 @@ import com.google.android.gms.ads.rewarded.RewardedAd
 import com.google.android.gms.ads.rewarded.RewardedAdLoadCallback
 import com.helikanonlib.simpleadmanager.admobnativetemplates.NativeTemplateStyle
 import com.helikanonlib.simpleadmanager.admobnativetemplates.TemplateView
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 
 class AdmobAds(override var appId: String) : AdPlatformWrapper(appId) {
 
@@ -32,7 +37,21 @@ class AdmobAds(override var appId: String) : AdPlatformWrapper(appId) {
     override fun initialize(context: Context, testMode: Boolean) {
         if (isInitialized) return
 
-        MobileAds.initialize(context)
+        CoroutineScope(Dispatchers.IO).launch {
+            MobileAds.initialize(context, object: OnInitializationCompleteListener{
+                override fun onInitializationComplete(initializationStatus: InitializationStatus) {
+
+
+                    /*for ((adapterClass, status) in initializationStatus.adapterStatusMap) {
+                        Log.d(
+                            "AdmobAds",
+                            "Adapter: $adapterClass, Status: ${status.description}, Latency: ${status.latency}ms",
+                        )
+                    }*/
+                }
+
+            })
+        }
         isInitialized = true
 
         if (testMode) {
@@ -87,7 +106,6 @@ class AdmobAds(override var appId: String) : AdPlatformWrapper(appId) {
             activity, placementId, AdRequest.Builder()
                 .build(), object : InterstitialAdLoadCallback() {
                 override fun onAdLoaded(interstitialAd: InterstitialAd) {
-
                     adIntances[placementId] = PlatformAdInstance(
                         AdFormatEnum.INTERSTITIAL,
                         placementId,
