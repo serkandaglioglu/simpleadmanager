@@ -37,9 +37,14 @@
 -keep class com.mobilefuse.** { *; }
 -keep class com.verve.** { *; }
 -keep class net.pubnative.** { *; }
+-keep class com.moloco.sdk.** { *; }
 -keep class com.safedk.** { *; }
 -keep class com.applovin.quality.** { *; }
 -keep class com.braze.** { *; }
--keep class androidx.media3.common.Player {
-	void release();
-}
+-keep class com.yandex.divkit.** { *; } 
+-keep class com.yandex.div.** { *; } 
+-keep class com.monetization.ads.** { *; } 
+-keep public class com.google.android.exoplayer2.** { *; }
+-keep public interface com.google.android.exoplayer2.** { *; }
+-keep class androidx.media3.** { *; }
+-keep interface androidx.media3.** { *; }

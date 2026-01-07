@@ -2,10 +2,12 @@ package com.helikanonlib.simpleadmanager
 
 import android.app.Activity
 import android.content.Context
+import android.os.Build
 import android.util.DisplayMetrics
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import android.view.WindowMetrics
 import android.widget.RelativeLayout
 import com.google.android.gms.ads.*
 import com.google.android.gms.ads.initialization.InitializationStatus
@@ -38,18 +40,18 @@ class AdmobAds(override var appId: String) : AdPlatformWrapper(appId) {
         if (isInitialized) return
 
         CoroutineScope(Dispatchers.IO).launch {
-            MobileAds.initialize(context, object: OnInitializationCompleteListener{
+            MobileAds.initialize(context, object : OnInitializationCompleteListener {
                 override fun onInitializationComplete(initializationStatus: InitializationStatus) {
 
-
-                    /*for ((adapterClass, status) in initializationStatus.adapterStatusMap) {
-                        Log.d(
-                            "AdmobAds",
-                            "Adapter: $adapterClass, Status: ${status.description}, Latency: ${status.latency}ms",
-                        )
-                    }*/
+                    if (BuildConfig.DEBUG) {
+                        for ((adapterClass, status) in initializationStatus.adapterStatusMap) {
+                            Log.d(
+                                "AdmobAds",
+                                "Adapter: $adapterClass, Status: ${status.description}, Latency: ${status.latency}ms",
+                            )
+                        }
+                    }
                 }
-
             })
         }
         isInitialized = true
@@ -58,9 +60,6 @@ class AdmobAds(override var appId: String) : AdPlatformWrapper(appId) {
             enableTestMode(context, null)
         }
 
-        /*val x = context.packageManager.getApplicationInfo(context.packageName, PackageManager.GET_META_DATA)
-        val y = x.metaData.getString("com.google.android.gms.ads.APPLICATION_ID")
-        val aasdfa = 4+4*/
     }
 
     override fun enableTestMode(context: Context, deviceId: String?) {
@@ -239,11 +238,11 @@ class AdmobAds(override var appId: String) : AdPlatformWrapper(appId) {
         val bannerAdView: AdView? = if (adIntances.containsKey(placementId)) adIntances.get(placementId)?.instance as AdView? else null
 
         var isLoaded = _isBannerLoaded(bannerAdView)
-        if (isLoaded && !isValidLoadedBanner(platformType)) {
+        /*if (isLoaded && !isValidLoadedBanner(platformType)) {
             _removeBannerViewIfExists(bannerAdView)
             adIntances[placementId] = null
             isLoaded = false
-        }
+        }*/
 
         return isLoaded
     }
@@ -257,7 +256,7 @@ class AdmobAds(override var appId: String) : AdPlatformWrapper(appId) {
                 addRule(RelativeLayout.CENTER_HORIZONTAL)
             }
 
-        if (_isBannerLoaded(bannerAdView)) {
+        if (isBannerLoaded(placementId)) {
             try {
                 _removeBannerViewIfExists(bannerAdView)
                 containerView.addView(bannerAdView, lp)
@@ -276,12 +275,16 @@ class AdmobAds(override var appId: String) : AdPlatformWrapper(appId) {
         bannerAdView.adListener = object : AdListener() {
             override fun onAdFailedToLoad(error: LoadAdError) {
                 super.onAdFailedToLoad(error)
-                adIntances[placementId] = null
-                activity.runOnUiThread {
-                    _removeBannerViewIfExists(bannerAdView, containerView)
-                }
 
-                listener?.onError(AdErrorMode.PLATFORM, "${platformType.name} banner >> error code=${error.code} / ${error.message}", platformType)
+                if (!isBannerLoaded(placementId)){
+
+                    adIntances[placementId] = null
+                    activity.runOnUiThread {
+                        _removeBannerViewIfExists(bannerAdView, containerView)
+                    }
+
+                    listener?.onError(AdErrorMode.PLATFORM, "${platformType.name} banner >> error code=${error.code} / ${error.message}", platformType)
+                }
             }
 
             override fun onAdLoaded() {
@@ -311,16 +314,15 @@ class AdmobAds(override var appId: String) : AdPlatformWrapper(appId) {
     }
 
     fun getBannerAdaptiveSize(activity: Activity, containerView: RelativeLayout): AdSize {
-        val display = activity.windowManager.defaultDisplay
-        val outMetrics = DisplayMetrics()
-        display.getMetrics(outMetrics)
-
-        val density = outMetrics.density
-
-        var adWidthPixels = containerView.width.toFloat()
-        if (adWidthPixels == 0f) {
-            adWidthPixels = outMetrics.widthPixels.toFloat()
-        }
+        val displayMetrics = activity.resources.displayMetrics
+        val adWidthPixels =
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+                val windowMetrics: WindowMetrics = activity.windowManager.currentWindowMetrics
+                windowMetrics.bounds.width()
+            } else {
+                displayMetrics.widthPixels
+            }
+        val density = displayMetrics.density
 
         val adWidth = (adWidthPixels / density).toInt()
 
@@ -335,11 +337,11 @@ class AdmobAds(override var appId: String) : AdPlatformWrapper(appId) {
         val mrecAdView: AdView? = if (adIntances.containsKey(placementId)) adIntances.get(placementId)?.instance as AdView? else null
 
         var isLoaded = _isBannerLoaded(mrecAdView)
-        if (isLoaded && !isValidLoadedMrec(platformType)) {
+        /*if (isLoaded && !isValidLoadedMrec(platformType)) {
             _removeBannerViewIfExists(mrecAdView)
             adIntances[placementId] = null
             isLoaded = false
-        }
+        }*/
 
         return isLoaded
     }
@@ -353,7 +355,7 @@ class AdmobAds(override var appId: String) : AdPlatformWrapper(appId) {
                 addRule(RelativeLayout.CENTER_HORIZONTAL)
             }
 
-        if (_isBannerLoaded(mrecAdView)) {
+        if (isMrecLoaded(placementId)) {
             try {
                 _removeBannerViewIfExists(mrecAdView)
                 containerView.addView(mrecAdView, lp)
@@ -372,12 +374,16 @@ class AdmobAds(override var appId: String) : AdPlatformWrapper(appId) {
         mrecAdView.adListener = object : AdListener() {
             override fun onAdFailedToLoad(error: LoadAdError) {
                 super.onAdFailedToLoad(error)
-                adIntances[placementId] = null
-                activity.runOnUiThread {
-                    _removeBannerViewIfExists(mrecAdView, containerView)
-                }
 
-                listener?.onError(AdErrorMode.PLATFORM, "${platformType.name} mrec >> error code=${error.code} / ${error.message}", platformType)
+                if (!isMrecLoaded(placementId)){
+                    adIntances[placementId] = null
+
+                    activity.runOnUiThread {
+                        _removeBannerViewIfExists(mrecAdView, containerView)
+                    }
+
+                    listener?.onError(AdErrorMode.PLATFORM, "${platformType.name} mrec >> error code=${error.code} / ${error.message}", platformType)
+                }
             }
 
             override fun onAdLoaded() {
@@ -407,21 +413,20 @@ class AdmobAds(override var appId: String) : AdPlatformWrapper(appId) {
     }
 
     fun getMrecBannerAdaptiveSize(activity: Activity, containerView: RelativeLayout): AdSize {
-        val display = activity.windowManager.defaultDisplay
-        val outMetrics = DisplayMetrics()
-        display.getMetrics(outMetrics)
-
-        val density = outMetrics.density
-
-        var adWidthPixels = containerView.width.toFloat()
-        if (adWidthPixels == 0f) {
-            adWidthPixels = outMetrics.widthPixels.toFloat()
-        }
-
+        val displayMetrics = activity.resources.displayMetrics
+        val adWidthPixels =
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+                val windowMetrics: WindowMetrics = activity.windowManager.currentWindowMetrics
+                windowMetrics.bounds.width()
+            } else {
+                displayMetrics.widthPixels
+            }
+        val density = displayMetrics.density
         val adWidth = (adWidthPixels / density).toInt() - 24
 
         return AdSize.getCurrentOrientationInlineAdaptiveBannerAdSize(activity, adWidth)
     }
+
 
     // ################################################################################
     // ################################### NATIVE #####################################

@@ -292,11 +292,11 @@ class ApplovinAds(override var appId: String) : AdPlatformWrapper(appId) {
         val bannerAdView: MaxAdView? = if (adIntances.containsKey(placementId)) adIntances.get(placementId)?.instance as MaxAdView? else null
 
         var isLoaded = _isBannerLoaded(bannerAdView)
-        if (isLoaded && !isValidLoadedBanner(platformType)) {
+        /*if (isLoaded && !isValidLoadedBanner(platformType)) {
             _removeBannerViewIfExists(bannerAdView)
             adIntances[placementId] = null
             isLoaded = false
-        }
+        }*/
 
         return isLoaded
     }
@@ -310,7 +310,7 @@ class ApplovinAds(override var appId: String) : AdPlatformWrapper(appId) {
                 addRule(RelativeLayout.CENTER_HORIZONTAL)
             }*/
 
-        if (_isBannerLoaded(bannerAdView)) {
+        if (isBannerLoaded(placementId)) {
             try {
                 _removeBannerViewIfExists(bannerAdView)
                 containerView.addView(bannerAdView)
@@ -348,12 +348,14 @@ class ApplovinAds(override var appId: String) : AdPlatformWrapper(appId) {
             }
 
             override fun onAdLoadFailed(adUnitId: String, error: MaxError) {
-                adIntances[placementId] = null
-                activity.runOnUiThread {
-                    _removeBannerViewIfExists(bannerAdView, containerView)
-                }
+                if (!isBannerLoaded(placementId)){
+                    adIntances[placementId] = null
+                    activity.runOnUiThread {
+                        _removeBannerViewIfExists(bannerAdView, containerView)
+                    }
 
-                listener?.onError(AdErrorMode.PLATFORM, "${platformType.name} banner >> error code=${error?.code} / ${error?.message}", platformType)
+                    listener?.onError(AdErrorMode.PLATFORM, "${platformType.name} banner >> error code=${error?.code} / ${error?.message}", platformType)
+                }
             }
 
             override fun onAdDisplayed(ad: MaxAd) {
@@ -393,11 +395,11 @@ class ApplovinAds(override var appId: String) : AdPlatformWrapper(appId) {
         val mrecAdView: MaxAdView? = if (adIntances.containsKey(placementId)) adIntances.get(placementId)?.instance as MaxAdView? else null
 
         var isLoaded = _isBannerLoaded(mrecAdView)
-        if (isLoaded && !isValidLoadedMrec(platformType)) {
+        /*if (isLoaded && !isValidLoadedMrec(platformType)) {
             _removeBannerViewIfExists(mrecAdView)
             adIntances[placementId] = null
             isLoaded = false
-        }
+        }*/
 
         return isLoaded
     }
@@ -411,7 +413,7 @@ class ApplovinAds(override var appId: String) : AdPlatformWrapper(appId) {
                 addRule(RelativeLayout.CENTER_HORIZONTAL)
             }*/
 
-        if (_isBannerLoaded(mrecAdView)) {
+        if (isMrecLoaded(placementId)) {
             try {
                 _removeBannerViewIfExists(mrecAdView)
                 containerView.addView(mrecAdView)
@@ -443,12 +445,14 @@ class ApplovinAds(override var appId: String) : AdPlatformWrapper(appId) {
             }
 
             override fun onAdLoadFailed(adUnitId: String, error: MaxError) {
-                adIntances[placementId] = null
-                activity.runOnUiThread {
-                    _removeBannerViewIfExists(mrecAdView, containerView)
-                }
+                if (!isMrecLoaded(placementId)){
+                    adIntances[placementId] = null
+                    activity.runOnUiThread {
+                        _removeBannerViewIfExists(mrecAdView, containerView)
+                    }
 
-                listener?.onError(AdErrorMode.PLATFORM, "${platformType.name} mrec >> error code=${error?.code} / ${error?.message}", platformType)
+                    listener?.onError(AdErrorMode.PLATFORM, "${platformType.name} mrec >> error code=${error?.code} / ${error?.message}", platformType)
+                }
             }
 
 

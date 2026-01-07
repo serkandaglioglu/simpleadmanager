@@ -42,7 +42,7 @@ class MyApplication : Application() {
                     platformType = AdPlatformTypeEnum.ADMOB,
                     interstitial = "ca-app-pub-3940256099942544/1033173712",
                     rewarded = "ca-app-pub-3940256099942544/5224354917",
-                    banner = "ca-app-pub-3940256099942544/6300978112",
+                    banner = "ca-app-pub-3940256099942544/6300978111",
                     mrec = "ca-app-pub-3940256099942544/6300978111",
                     nativeSmall = "ca-app-pub-3940256099942544/2247696110",
                     nativeMedium = "",
@@ -82,7 +82,7 @@ class MyApplication : Application() {
         // default placement group
         adManager.setAdPlatformSortByAdFormatStr(SimpleAdManager.DEFAULT_PLACEMENT_GROUPCODE, AdFormatEnum.INTERSTITIAL.name, "admob,applovin")
         adManager.setAdPlatformSortByAdFormatStr(SimpleAdManager.DEFAULT_PLACEMENT_GROUPCODE, AdFormatEnum.REWARDED.name, "applovin,admob")
-        adManager.setAdPlatformSortByAdFormatStr(SimpleAdManager.DEFAULT_PLACEMENT_GROUPCODE, AdFormatEnum.BANNER.name, "applovin,admob")
+        adManager.setAdPlatformSortByAdFormatStr(SimpleAdManager.DEFAULT_PLACEMENT_GROUPCODE, AdFormatEnum.BANNER.name, "admob,applovin")
         adManager.setAdPlatformSortByAdFormatStr(SimpleAdManager.DEFAULT_PLACEMENT_GROUPCODE, AdFormatEnum.MREC.name, "applovin,admob")
         adManager.setAdPlatformSortByAdFormatStr(SimpleAdManager.DEFAULT_PLACEMENT_GROUPCODE, AdFormatEnum.NATIVE_SMALL.name, "applovin,admob")
         adManager.setAdPlatformSortByAdFormatStr(SimpleAdManager.DEFAULT_PLACEMENT_GROUPCODE, AdFormatEnum.NATIVE_MEDIUM.name, "applovin,admob")
