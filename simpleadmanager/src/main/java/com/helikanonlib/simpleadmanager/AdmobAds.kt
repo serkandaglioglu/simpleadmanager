@@ -587,7 +587,7 @@ class AdmobAds(override var appId: String) : AdPlatformWrapper(appId) {
             val adIns = if (adIntances.containsKey(placementId) && adIntances[placementId] != null) adIntances.get(placementId) else null
             if (adIns == null) return
 
-            var nativeAds: ArrayList<Any> = adIns as ArrayList<Any>
+            var nativeAds: ArrayList<Any> = adIns.instance as ArrayList<Any>
             try {
                 nativeAds.forEach {
                     (it as NativeAd).destroy()

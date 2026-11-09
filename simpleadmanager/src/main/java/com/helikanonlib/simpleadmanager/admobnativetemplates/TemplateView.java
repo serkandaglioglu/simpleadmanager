@@ -221,13 +221,12 @@ public class TemplateView extends FrameLayout {
         requestLayout();
     }
 
+    // body (tertiaryView) and mediaView are optional: the small template has neither, both are null-safe below
     private boolean areAllViewsInitialized() {
         return nativeAdView != null
                 && callToActionView != null
                 && primaryView != null
                 && secondaryView != null
-                && tertiaryView != null
-                && mediaView != null
                 && iconView != null
                 && ratingBar != null;
     }

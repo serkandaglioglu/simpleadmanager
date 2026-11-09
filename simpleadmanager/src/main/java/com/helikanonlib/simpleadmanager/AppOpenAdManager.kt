@@ -53,7 +53,7 @@ class AppOpenAdManager(
         showOrderStr = showOrderStr.lowercase()
 
         if (showOrderStr.contains("applovin") && applovinPlacementId.isNotEmpty()) {
-            applovinAppOpenAd = MaxAppOpenAd(applovinPlacementId, application.applicationContext)
+            applovinAppOpenAd = MaxAppOpenAd(applovinPlacementId)
         }
 
         ProcessLifecycleOwner.get().lifecycle.addObserver(this)
@@ -320,6 +320,7 @@ class AppOpenAdManager(
 
             override fun onAdFailedToShowFullScreenContent(error: AdError) {
                 super.onAdFailedToShowFullScreenContent(error)
+                admobAppOpenAd = null // a failed ad can't be shown again; let the next show trigger a fresh load
                 listener?.onError(AdErrorMode.PLATFORM, error?.message ?: "", platform)
             }
 

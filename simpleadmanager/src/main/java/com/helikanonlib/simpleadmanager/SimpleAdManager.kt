@@ -60,8 +60,6 @@ class SimpleAdManager {
                     pg = it
                     return@breaker
                 }
-
-                Log.e("SimpleAdManager", it.groupCode)
             }
         }
 
@@ -135,12 +133,13 @@ class SimpleAdManager {
         placementGroups.forEach {
             if (it.platformType == AdPlatformTypeEnum.ADMOB) {
                 it.interstitial = "ca-app-pub-3940256099942544/1033173712"
-                it.banner = "ca-app-pub-3940256099942544/6300978111"
+                // every format needs its own unit id: platforms cache ad instances by placement id
+                it.banner = "ca-app-pub-3940256099942544/9214589741"
                 it.rewarded = "ca-app-pub-3940256099942544/5224354917"
                 it.mrec = "ca-app-pub-3940256099942544/6300978111"
                 it.nativeSmall = "ca-app-pub-3940256099942544/2247696110"
-                it.nativeMedium = "ca-app-pub-3940256099942544/2247696110"
-                it.appOpenAd = "ca-app-pub-3940256099942544/3419835294"
+                it.nativeMedium = "ca-app-pub-3940256099942544/1044960115"
+                it.appOpenAd = "ca-app-pub-3940256099942544/9257395921"
             }
         }
 
@@ -290,6 +289,7 @@ class SimpleAdManager {
         activity: Activity, shownWhere: String = DEFAULT_INTERSTITIAL_SHOWN_WHERE_NAME, placementGroupCode: String = DEFAULT_PLACEMENT_GROUPCODE,
         listener: AdPlatformShowListener? = null, platformType: AdPlatformTypeEnum? = null
     ) {
+        if (!showAds) return
 
         if (isEnableShowLoadingViewForInterstitial) {
             activity.runOnUiThread {
@@ -478,7 +478,7 @@ class SimpleAdManager {
         run breaker@{
             interstitialAdPlatforms.forEach forEach@{ _platform ->
                 if (platformType != null && _platform.platformType != platformType) {
-                    return@breaker
+                    return@forEach
                 }
 
                 val placementId = getPlacementGroupByCodeAndPlatform(placementGroupCode, _platform.platformType)?.interstitial
@@ -1227,22 +1227,11 @@ class SimpleAdManager {
 
     fun removeLoadingViewFromActivity(activity: Activity) {
         try {
-            if (loadingView == null) return
-            val activityRootView = activity.findViewById<ViewGroup>(android.R.id.content)
-                .getChildAt(0) as ViewGroup
-
-            val className = activityRootView::class.simpleName
-
-            if (className == "NestedScrollView") {
-                (activityRootView.getChildAt(0) as ViewGroup).removeView(loadingView)
-            } else {
-                activityRootView.removeView(loadingView)
-            }
-
-
+            (loadingView?.parent as? ViewGroup)?.removeView(loadingView)
         } catch (e: Exception) {
             e.printStackTrace()
         }
+        loadingView = null // it holds the activity context; drop it so the (app-wide) manager does not leak the activity
     }
 
 
@@ -1382,7 +1371,7 @@ class SimpleAdManager {
 
 
     fun hasLoadedNativeAds(activity: Activity, nativeAdFormat: AdFormatEnum, placementGroupCode: String = DEFAULT_PLACEMENT_GROUPCODE): Boolean {
-        return getLoadedNativeAdsCount(activity, nativeAdFormat) > 0
+        return getLoadedNativeAdsCount(activity, nativeAdFormat, placementGroupCode) > 0
     }
 
     fun getLoadedNativeAdsCount(activity: Activity, nativeAdFormat: AdFormatEnum, placementGroupCode: String = DEFAULT_PLACEMENT_GROUPCODE): Int {
