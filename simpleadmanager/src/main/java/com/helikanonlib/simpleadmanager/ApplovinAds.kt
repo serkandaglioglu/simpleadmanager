@@ -25,17 +25,18 @@ class ApplovinAds(override var appId: String) : AdPlatformWrapper(appId) {
     override var platformType = AdPlatformTypeEnum.APPLOVIN
     var adIntances: MutableMap<String, PlatformAdInstance?> = mutableMapOf()
 
-    override fun initialize(activity: Activity, onInitializeComplete: ((Boolean) -> Unit)?, testMode: Boolean) {
-    }
-
     override fun initialize(context: Context, onInitializeComplete: ((Boolean) -> Unit)?, testMode: Boolean) {
         if (!beginInitialization(onInitializeComplete)) return
 
-        val initConfig = AppLovinSdkInitializationConfiguration.builder(appId)
-            .setMediationProvider(AppLovinMediationProvider.MAX)
-            .build()
+        try {
+            val initConfig = AppLovinSdkInitializationConfiguration.builder(appId)
+                .setMediationProvider(AppLovinMediationProvider.MAX)
+                .build()
 
-        AppLovinSdk.getInstance(context).initialize(initConfig) { completeInitialization() }
+            AppLovinSdk.getInstance(context).initialize(initConfig) { completeInitialization() }
+        } catch (error: Exception) {
+            failInitialization()
+        }
     }
 
     override fun enableTestMode(context: Context, deviceId: String?) {
@@ -199,11 +200,13 @@ class ApplovinAds(override var appId: String) : AdPlatformWrapper(appId) {
 
         override fun onAdHidden(ad: MaxAd) {
             rewardedShowListeners.remove(placementId)?.onClosed(platformType)
+            reloadIfRequestedWhileShowing(placementId)
         }
 
         override fun onAdClicked(ad: MaxAd) {}
 
         override fun onAdDisplayFailed(ad: MaxAd, error: MaxError) {
+            reloadIfRequestedWhileShowing(placementId)
             rewardedShowListeners.remove(placementId)
                 ?.onPlatformError(platformError(AdFormatEnum.REWARDED, placementId, "${platformType.name} rewarded show >> error code=${error.code} / ${error.message}"))
         }
@@ -211,6 +214,12 @@ class ApplovinAds(override var appId: String) : AdPlatformWrapper(appId) {
         override fun onUserRewarded(ad: MaxAd, reward: MaxReward) {
             rewardedShowListeners[placementId]?.onRewarded(reward.label, reward.amount, platformType)
         }
+    }
+
+    // MAX ignores loadAd() while the ad is on screen ("Can not load another ad while the ad is showing"), so a load
+    // requested meanwhile is started once the ad is gone.
+    private fun reloadIfRequestedWhileShowing(placementId: String) {
+        if (!rewardedLoadListeners[placementId].isNullOrEmpty()) MaxRewardedAd.getInstance(placementId).loadAd()
     }
 
     override fun loadRewarded(activity: Activity, placementId: String, listener: AdPlatformLoadListener?) {

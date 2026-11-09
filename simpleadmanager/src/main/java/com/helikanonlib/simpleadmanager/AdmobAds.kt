@@ -23,27 +23,28 @@ class AdmobAds(override var appId: String) : AdPlatformWrapper(appId) {
     override var platformType = AdPlatformTypeEnum.ADMOB
     var adIntances: MutableMap<String, PlatformAdInstance?> = mutableMapOf()
 
-    override fun initialize(activity: Activity, onInitializeComplete: ((Boolean) -> Unit)?, testMode: Boolean) {
-    }
-
     override fun initialize(context: Context, onInitializeComplete: ((Boolean) -> Unit)?, testMode: Boolean) {
         if (!beginInitialization(onInitializeComplete)) return
 
         CoroutineScope(Dispatchers.IO).launch {
-            MobileAds.initialize(context, object : OnInitializationCompleteListener {
-                override fun onInitializationComplete(initializationStatus: InitializationStatus) {
+            try {
+                MobileAds.initialize(context, object : OnInitializationCompleteListener {
+                    override fun onInitializationComplete(initializationStatus: InitializationStatus) {
 
-                    if (BuildConfig.DEBUG) {
-                        for ((adapterClass, status) in initializationStatus.adapterStatusMap) {
-                            Log.d(
-                                "AdmobAds",
-                                "Adapter: $adapterClass, Status: ${status.description}, Latency: ${status.latency}ms",
-                            )
+                        if (BuildConfig.DEBUG) {
+                            for ((adapterClass, status) in initializationStatus.adapterStatusMap) {
+                                Log.d(
+                                    "AdmobAds",
+                                    "Adapter: $adapterClass, Status: ${status.description}, Latency: ${status.latency}ms",
+                                )
+                            }
                         }
+                        completeInitialization()
                     }
-                    completeInitialization()
-                }
-            })
+                })
+            } catch (error: Exception) {
+                failInitialization()
+            }
         }
 
         if (testMode) {

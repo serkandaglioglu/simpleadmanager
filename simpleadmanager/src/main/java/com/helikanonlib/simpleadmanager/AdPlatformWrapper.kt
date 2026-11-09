@@ -37,10 +37,21 @@ abstract class AdPlatformWrapper(open var appId: String) {
         callbacks.forEach { it(true) }
     }
 
+    /** The SDK threw while starting: report false to every waiting caller and allow a later retry. */
+    protected fun failInitialization() {
+        val callbacks = synchronized(pendingInitializeCallbacks) {
+            isInitializeStarted = false
+            pendingInitializeCallbacks.toList().also { pendingInitializeCallbacks.clear() }
+        }
+        callbacks.forEach { it(false) }
+    }
+
     protected fun platformError(format: AdFormatEnum, placementId: String, message: String, cause: Throwable? = null) =
         AdPlatformError(format, platformType, placementId, message, cause)
 
-    abstract fun initialize(activity: Activity, onInitializeComplete: ((Boolean) -> Unit)? = null, testMode: Boolean = false)
+    // the cast picks the Context overload; without it this would call itself
+    open fun initialize(activity: Activity, onInitializeComplete: ((Boolean) -> Unit)? = null, testMode: Boolean = false) =
+        initialize(activity as Context, onInitializeComplete, testMode)
 
     /** onInitializeComplete is always called once per call, also when the SDK was already initialized. */
     abstract fun initialize(context: Context, onInitializeComplete: ((Boolean) -> Unit)? = null, testMode: Boolean = false)

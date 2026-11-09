@@ -395,6 +395,23 @@ class SimpleAdManager {
         return order.mapNotNull { placementOf(placementGroupCode, it, adFormatEnum) }
     }
 
+    // An SDK that throws while starting a load is reported like a failed load instead of crashing the caller.
+    private inline fun loadSafely(adFormat: AdFormatEnum, placement: PlatformPlacement, listener: AdPlatformLoadListener, load: () -> Unit) {
+        try {
+            load()
+        } catch (error: Exception) {
+            listener.onPlatformError(
+                AdPlatformError(
+                    adFormat,
+                    placement.type,
+                    placement.placementId,
+                    "${placement.type.name} ${adFormat.name.lowercase(Locale.ENGLISH)} load failed: ${error.message.orEmpty()}",
+                    error
+                )
+            )
+        }
+    }
+
     private fun missingPlacementError(adFormat: AdFormatEnum, placementGroupCode: String, platformType: AdPlatformTypeEnum) =
         AdManagerError(
             format = adFormat,
@@ -439,16 +456,17 @@ class SimpleAdManager {
             return
         }
         val platformsToLoad = interstitialAdPlatforms.filterNot { it.platform.isInterstitialLoaded(it.placementId) }
-        if (platformsToLoad.isEmpty()) {
-            notifyLoadListeners(globalInterstitialLoadListener, listener) { it.onLoaded(interstitialAdPlatforms.first().type) }
-            return
+        // an ad that is already loaded completes the request; the other platforms only refill
+        val loadedPlatform = interstitialAdPlatforms.firstOrNull { it !in platformsToLoad }
+        if (loadedPlatform != null) {
+            notifyLoadListeners(globalInterstitialLoadListener, listener) { it.onLoaded(loadedPlatform.type) }
         }
 
         val platformErrors = mutableListOf<AdPlatformError>()
         var completedCount = 0
-        var hasLoaded = false
+        var hasLoaded = loadedPlatform != null
         platformsToLoad.forEach { candidate ->
-            candidate.platform.loadInterstitial(activity, candidate.placementId, object : AdPlatformLoadListener() {
+            val candidateListener = object : AdPlatformLoadListener() {
                 override fun onLoaded(adPlatformEnum: AdPlatformTypeEnum) {
                     hasLoaded = true
                     completedCount++
@@ -470,7 +488,10 @@ class SimpleAdManager {
                         notifyLoadListeners(globalInterstitialLoadListener, listener) { it.onError(managerError) }
                     }
                 }
-            })
+            }
+            loadSafely(AdFormatEnum.INTERSTITIAL, candidate, candidateListener) {
+                candidate.platform.loadInterstitial(activity, candidate.placementId, candidateListener)
+            }
         }
     }
 
@@ -518,7 +539,9 @@ class SimpleAdManager {
             }
         }
 
-        candidate.platform.loadInterstitial(activity, candidate.placementId, _listener)
+        loadSafely(AdFormatEnum.INTERSTITIAL, candidate, _listener) {
+            candidate.platform.loadInterstitial(activity, candidate.placementId, _listener)
+        }
     }
 
     private fun _loadInterstitial(activity: Activity, placementGroupCode: String, placement: PlatformPlacement, listener: AdPlatformLoadListener? = null) {
@@ -540,7 +563,9 @@ class SimpleAdManager {
             }
         }
 
-        placement.platform.loadInterstitial(activity, placement.placementId, _listener)
+        loadSafely(AdFormatEnum.INTERSTITIAL, placement, _listener) {
+            placement.platform.loadInterstitial(activity, placement.placementId, _listener)
+        }
     }
 
 
@@ -627,6 +652,9 @@ class SimpleAdManager {
         platformType: AdPlatformTypeEnum? = null, loadAndShowIfNotExistsAdsOnAutoloadMode: Boolean = false
     ): Boolean {
         if (!showAds) {
+            activity.runOnUiThread {
+                removeLoadingViewFromActivity(activity)
+            }
             notifyShowDisabled(AdFormatEnum.INTERSTITIAL, placementGroupCode, globalInterstitialShowListener, listener)
             return false
         }
@@ -802,16 +830,17 @@ class SimpleAdManager {
             return
         }
         val platformsToLoad = rewardedAdPlatforms.filterNot { it.platform.isRewardedLoaded(it.placementId) }
-        if (platformsToLoad.isEmpty()) {
-            notifyLoadListeners(globalRewardedLoadListener, listener) { it.onLoaded(rewardedAdPlatforms.first().type) }
-            return
+        // an ad that is already loaded completes the request; the other platforms only refill
+        val loadedPlatform = rewardedAdPlatforms.firstOrNull { it !in platformsToLoad }
+        if (loadedPlatform != null) {
+            notifyLoadListeners(globalRewardedLoadListener, listener) { it.onLoaded(loadedPlatform.type) }
         }
 
         val platformErrors = mutableListOf<AdPlatformError>()
         var completedCount = 0
-        var hasLoaded = false
+        var hasLoaded = loadedPlatform != null
         platformsToLoad.forEach { candidate ->
-            candidate.platform.loadRewarded(activity, candidate.placementId, object : AdPlatformLoadListener() {
+            val candidateListener = object : AdPlatformLoadListener() {
                 override fun onLoaded(adPlatformEnum: AdPlatformTypeEnum) {
                     hasLoaded = true
                     completedCount++
@@ -833,7 +862,10 @@ class SimpleAdManager {
                         notifyLoadListeners(globalRewardedLoadListener, listener) { it.onError(managerError) }
                     }
                 }
-            })
+            }
+            loadSafely(AdFormatEnum.REWARDED, candidate, candidateListener) {
+                candidate.platform.loadRewarded(activity, candidate.placementId, candidateListener)
+            }
         }
     }
 
@@ -882,7 +914,9 @@ class SimpleAdManager {
             }
         }
 
-        candidate.platform.loadRewarded(activity, candidate.placementId, _listener)
+        loadSafely(AdFormatEnum.REWARDED, candidate, _listener) {
+            candidate.platform.loadRewarded(activity, candidate.placementId, _listener)
+        }
     }
 
     private fun _loadRewarded(activity: Activity, placementGroupCode: String, placement: PlatformPlacement, listener: AdPlatformLoadListener? = null) {
@@ -904,7 +938,9 @@ class SimpleAdManager {
             }
         }
 
-        placement.platform.loadRewarded(activity, placement.placementId, _listener)
+        loadSafely(AdFormatEnum.REWARDED, placement, _listener) {
+            placement.platform.loadRewarded(activity, placement.placementId, _listener)
+        }
     }
 
 
@@ -941,14 +977,7 @@ class SimpleAdManager {
         validatePlacementGroup(placementGroupCode)
 
         if (autoLoadForRewarded) {
-            val isShowed = _showRewarded(activity, shownWhere, placementGroupCode, listener, platformType)
-
-            if (!isShowed) {
-                if (isEnabledLoadAndShowIfNotExistsAdsOnAutoloadMode && loadAndShowIfNotExistsAdsOnAutoloadMode) {
-                    stopAutoloadRewardedHandler()
-                    loadAndShowRewarded(activity, shownWhere, placementGroupCode, listener, platformType)
-                }
-            }
+            _showRewarded(activity, shownWhere, placementGroupCode, listener, platformType, loadAndShowIfNotExistsAdsOnAutoloadMode)
         } else {
             loadAndShowRewarded(activity, shownWhere, placementGroupCode, listener, platformType)
         }
@@ -957,7 +986,7 @@ class SimpleAdManager {
     fun _showRewarded(
         activity: Activity, shownWhere: String = DEFAULT_INTERSTITIAL_SHOWN_WHERE_NAME, placementGroupCode: String,
         listener: AdPlatformShowListener? = null,
-        platformType: AdPlatformTypeEnum? = null
+        platformType: AdPlatformTypeEnum? = null, loadAndShowIfNotExistsAdsOnAutoloadMode: Boolean = false
     ): Boolean {
         if (!showAds) {
             notifyShowDisabled(AdFormatEnum.REWARDED, placementGroupCode, globalRewardedShowListener, listener)
@@ -974,6 +1003,13 @@ class SimpleAdManager {
 
         // shared by "nothing loaded" and "platform failed to show"
         fun failShow(error: AdManagerError) {
+            // hand over to load-and-show without an error, so the listener gets a single terminal callback
+            if (autoLoadForRewarded && isEnabledLoadAndShowIfNotExistsAdsOnAutoloadMode && loadAndShowIfNotExistsAdsOnAutoloadMode) {
+                stopAutoloadRewardedHandler()
+                loadAndShowRewarded(activity, shownWhere, placementGroupCode, listener, platformType)
+                return
+            }
+
             notifyShowListeners(globalRewardedShowListener, listener) { it.onError(error) }
 
             if (autoLoadForRewarded) {

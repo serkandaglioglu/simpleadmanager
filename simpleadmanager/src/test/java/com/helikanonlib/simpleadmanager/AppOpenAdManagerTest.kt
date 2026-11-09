@@ -89,6 +89,26 @@ class AppOpenAdManagerTest {
         assertTrue(manager.hasFullScreenAdIntervalElapsed(nowElapsedRealtime = 31_000L))
     }
 
+    @Test
+    fun `disable after one platform loaded does not report a load error`() {
+        val admob = FakeAppOpenAdAdapter()
+        val applovin = FakeAppOpenAdAdapter(AdPlatformTypeEnum.APPLOVIN)
+        val manager = AppOpenAdManager(
+            adapters = listOf(admob, applovin),
+            runtime = FakeAppOpenAdRuntime(),
+            showOrderStr = "admob,applovin"
+        )
+        var loaded = false
+        var managerError: AdManagerError? = null
+
+        manager.load(loadListener(onLoaded = { loaded = true }, onError = { managerError = it }))
+        admob.completeLoad()
+        manager.disable()
+
+        assertTrue(loaded)
+        assertEquals(null, managerError)
+    }
+
     private fun createManager(adapter: FakeAppOpenAdAdapter): AppOpenAdManager {
         return AppOpenAdManager(
             adapters = listOf(adapter),
@@ -127,8 +147,9 @@ private class FakeAppOpenAdDisplayState(
     override val lastFullScreenAdClosedElapsedRealtime: Long? = null
 ) : AppOpenAdDisplayState
 
-private class FakeAppOpenAdAdapter : AppOpenAdAdapter {
-    override val platform = AdPlatformTypeEnum.ADMOB
+private class FakeAppOpenAdAdapter(
+    override val platform: AdPlatformTypeEnum = AdPlatformTypeEnum.ADMOB
+) : AppOpenAdAdapter {
 
     var loadCallCount = 0
         private set

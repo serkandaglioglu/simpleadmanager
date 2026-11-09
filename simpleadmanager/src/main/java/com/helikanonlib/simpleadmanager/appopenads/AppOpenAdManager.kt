@@ -261,7 +261,8 @@ class AppOpenAdManager private constructor(
     @MainThread
     private fun startLoad(adapter: AppOpenAdAdapter) {
         val platform = adapter.platform
-        if (!isEnabled || platform in loadingPlatforms || pendingListeners(platform).isEmpty()) return
+        // a load while an ad is on screen would replace its listener (MAX also ignores it); onClosed reloads
+        if (!isEnabled || isShowing || platform in loadingPlatforms || pendingListeners(platform).isEmpty()) return
 
         loadingPlatforms.add(platform)
         val requestGeneration = loadGeneration(platform)
@@ -326,15 +327,13 @@ class AppOpenAdManager private constructor(
         override fun onDisplayed() {
             runOnMain {
                 recordShowTime()
-                safeListenerCall { globalShowListener?.onDisplayed(platform) }
-                safeListenerCall { listener?.onDisplayed(platform) }
+                notifyShowListeners(listener) { it.onDisplayed(platform) }
             }
         }
 
         override fun onClicked() {
             runOnMain {
-                safeListenerCall { globalShowListener?.onClicked(platform) }
-                safeListenerCall { listener?.onClicked(platform) }
+                notifyShowListeners(listener) { it.onClicked(platform) }
             }
         }
 
@@ -342,8 +341,7 @@ class AppOpenAdManager private constructor(
             runOnMain {
                 isShowing = false
                 recordShowTime()
-                safeListenerCall { globalShowListener?.onClosed(platform) }
-                safeListenerCall { listener?.onClosed(platform) }
+                notifyShowListeners(listener) { it.onClosed(platform) }
                 load(showOrder, null)
             }
         }
@@ -408,7 +406,8 @@ class AppOpenAdManager private constructor(
         }
 
         override fun onError(error: AdManagerError) {
-            notifyLoadListeners(listener) { it.onError(error) }
+            // e.g. disable() cancelling the other platforms after one already loaded
+            if (!hasLoaded) notifyLoadListeners(listener) { it.onError(error) }
         }
     }
 
