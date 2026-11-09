@@ -182,6 +182,44 @@ class ApplovinAds(override var appId: String) : AdPlatformWrapper(appId) {
         return isLoaded
     }
 
+    // MaxRewardedAd is one shared instance per ad unit with a single listener slot. Callbacks are routed per placement
+    // so a load started while an ad is on screen can't replace (and swallow) that ad's reward/close callbacks.
+    private val rewardedLoadListeners = mutableMapOf<String, MutableList<AdPlatformLoadListener>>()
+    private val rewardedShowListeners = mutableMapOf<String, AdPlatformShowListener>()
+
+    private fun rewardedListener(placementId: String) = object : MaxRewardedAdListener {
+        override fun onAdLoaded(ad: MaxAd) {
+            updateLastLoadRewardedDateByAdPlatform(platformType)
+            rewardedLoadListeners.remove(placementId)?.forEach { it.onLoaded(platformType) }
+        }
+
+        override fun onAdLoadFailed(adUnitId: String, error: MaxError) {
+            adIntances[placementId] = null
+            rewardedLoadListeners.remove(placementId)?.forEach {
+                it.onError(AdErrorMode.PLATFORM, "${platformType.name} rewarded load >> error code=${error.code} / ${error.message}", platformType)
+            }
+        }
+
+        override fun onAdDisplayed(ad: MaxAd) {
+            rewardedShowListeners[placementId]?.onDisplayed(platformType)
+        }
+
+        override fun onAdHidden(ad: MaxAd) {
+            rewardedShowListeners.remove(placementId)?.onClosed(platformType)
+        }
+
+        override fun onAdClicked(ad: MaxAd) {}
+
+        override fun onAdDisplayFailed(ad: MaxAd, error: MaxError) {
+            rewardedShowListeners.remove(placementId)
+                ?.onError(AdErrorMode.PLATFORM, "${platformType.name} rewarded show >> error code=${error.code} / ${error.message}", platformType)
+        }
+
+        override fun onUserRewarded(ad: MaxAd, reward: MaxReward) {
+            rewardedShowListeners[placementId]?.onRewarded(reward.label, reward.amount, platformType)
+        }
+    }
+
     override fun loadRewarded(activity: Activity, placementId: String, listener: AdPlatformLoadListener?) {
         if (isRewardedLoaded(placementId)) {
             listener?.onLoaded(platformType)
@@ -191,42 +229,9 @@ class ApplovinAds(override var appId: String) : AdPlatformWrapper(appId) {
         adIntances[placementId] = null
 
         val rewardedAd = MaxRewardedAd.getInstance(placementId)
-
-        rewardedAd?.setListener(object : MaxRewardedAdListener {
-            override fun onAdLoaded(ad: MaxAd) {
-                updateLastLoadRewardedDateByAdPlatform(platformType)
-
-                listener?.onLoaded(platformType)
-            }
-
-            override fun onAdLoadFailed(adUnitId: String, error: MaxError) {
-                adIntances[placementId] = null
-                listener?.onError(AdErrorMode.PLATFORM, "${platformType.name} rewarded load >> error code=${error?.code} / ${error?.message}", platformType)
-            }
-
-
-            override fun onAdDisplayed(ad: MaxAd) {
-
-            }
-
-            override fun onAdHidden(ad: MaxAd) {
-
-            }
-
-            override fun onAdClicked(ad: MaxAd) {
-
-            }
-
-            override fun onAdDisplayFailed(ad: MaxAd, error: MaxError) {
-
-            }
-
-            override fun onUserRewarded(ad: MaxAd, reward: MaxReward) {
-
-            }
-
-        })
-        rewardedAd?.loadAd()
+        listener?.let { rewardedLoadListeners.getOrPut(placementId) { mutableListOf() }.add(it) }
+        rewardedAd.setListener(rewardedListener(placementId))
+        rewardedAd.loadAd()
         adIntances[placementId] = PlatformAdInstance(
             AdFormatEnum.REWARDED,
             placementId,
@@ -241,40 +246,10 @@ class ApplovinAds(override var appId: String) : AdPlatformWrapper(appId) {
             return
         }
 
-        val rewardedAd: MaxRewardedAd? = if (adIntances.containsKey(placementId)) adIntances.get(placementId)?.instance as MaxRewardedAd? else null
-
-        rewardedAd?.setListener(object : MaxRewardedAdListener {
-            override fun onAdLoaded(ad: MaxAd) {
-
-            }
-
-            override fun onAdDisplayed(ad: MaxAd) {
-                listener?.onDisplayed(platformType)
-            }
-
-            override fun onAdHidden(ad: MaxAd) {
-                adIntances[placementId] = null
-                listener?.onClosed(platformType)
-            }
-
-            override fun onAdClicked(ad: MaxAd) {
-            }
-
-            override fun onAdLoadFailed(adUnitId: String, error: MaxError) {
-
-            }
-
-            override fun onAdDisplayFailed(ad: MaxAd, error: MaxError) {
-                listener?.onError(AdErrorMode.PLATFORM, "${platformType.name} rewarded show >> error code=${error?.code} / ${error?.message}", platformType)
-                adIntances[placementId] = null
-            }
-
-            override fun onUserRewarded(ad: MaxAd, reward: MaxReward) {
-                listener?.onRewarded(reward?.label, reward?.amount, platformType)
-            }
-        })
-
-        rewardedAd?.showAd(shownWhere, activity)
+        val rewardedAd = adIntances[placementId]?.instance as MaxRewardedAd
+        if (listener != null) rewardedShowListeners[placementId] = listener else rewardedShowListeners.remove(placementId)
+        rewardedAd.setListener(rewardedListener(placementId))
+        rewardedAd.showAd(shownWhere, activity)
         adIntances[placementId] = null
 
     }
