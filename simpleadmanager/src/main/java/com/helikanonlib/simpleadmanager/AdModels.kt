@@ -38,8 +38,6 @@ enum class AdFormatEnum {
     BANNER,
     REWARDED,
     MREC,
-    NATIVE_SMALL,
-    NATIVE_MEDIUM,
     APP_OPEN
 }
 
@@ -59,8 +57,6 @@ data class AdPlacementGroup @JvmOverloads constructor(
     var rewarded: String = "",
     var banner: String = "",
     var mrec: String = "",
-    var nativeSmall: String = "",
-    var nativeMedium: String = "",
     var appOpenAd: String = ""
 
 )

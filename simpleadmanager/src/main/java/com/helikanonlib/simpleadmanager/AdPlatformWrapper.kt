@@ -30,13 +30,6 @@ abstract class AdPlatformWrapper(open var appId: String) {
     abstract fun isRewardedLoaded(placementId: String): Boolean
 
 
-    // val nativeAds: ArrayList<Any> = arrayListOf()
-    abstract fun hasLoadedNative(nativeAdFormat: AdFormatEnum, placementId: String): Boolean
-    abstract fun loadNativeAds(activity: Activity, placementId: String, nativeAdFormat: AdFormatEnum, count: Int, listener: AdPlatformLoadListener? = null)
-
-    // adSize >> [small,medium]
-    abstract fun showNative(activity: Activity, placementId: String, nativeAdFormat: AdFormatEnum, containerView: ViewGroup, listener: AdPlatformShowListener? = null): Boolean
-    abstract fun getNativeAds(activity: Activity, placementId: String, nativeAdFormat: AdFormatEnum): ArrayList<Any>
 
     abstract fun destroy(activity: Activity)
     abstract fun destroyBanner(activity: Activity, placementId: String)
@@ -70,25 +63,6 @@ abstract class AdPlatformWrapper(open var appId: String) {
         }
 
         return false
-    }
-
-    protected fun _removeViewIfExists(view: ViewGroup?, containerView: ViewGroup? = null) {
-
-        try {
-            if (view?.parent != null) {
-                (view.parent as ViewGroup).removeView(view)
-            }
-        } catch (e: Exception) {
-            e.printStackTrace()
-        }
-
-        containerView?.let {
-            try {
-                containerView.removeAllViews()
-            } catch (e: Exception) {
-                e.printStackTrace()
-            }
-        }
     }
 
 

@@ -28,10 +28,6 @@ class MainActivity : AppCompatActivity() {
         initViews()
 
         Handler(Looper.getMainLooper()).postDelayed({
-            MyApplication.adManager?.showNative(this@MainActivity, AdFormatEnum.NATIVE_SMALL, binding.nativeContainer)
-        }, 5000)
-
-        Handler(Looper.getMainLooper()).postDelayed({
             MyApplication.admobAppOpenAdManager?.isEnable = true
         }, 2000)
 
@@ -123,27 +119,6 @@ class MainActivity : AppCompatActivity() {
     private fun initAds() {
         MyApplication.adManager.initializePlatformsWithActivity(this)
         MyApplication.adManager.loadInterstitial(this)
-        MyApplication.adManager.loadNativeAds(this, AdFormatEnum.NATIVE_SMALL, 3, object : AdPlatformLoadListener() {
-            override fun onLoaded(adPlatformEnum: AdPlatformTypeEnum?) {
-                super.onLoaded(adPlatformEnum)
-            }
-
-            override fun onError(errorMode: AdErrorMode?, errorMessage: String?, adPlatformEnum: AdPlatformTypeEnum?) {
-                super.onError(errorMode, errorMessage, adPlatformEnum)
-            }
-
-        })
-
-        MyApplication.adManager.loadNativeAds(this, AdFormatEnum.NATIVE_MEDIUM, 3, object : AdPlatformLoadListener() {
-            override fun onLoaded(adPlatformEnum: AdPlatformTypeEnum?) {
-                super.onLoaded(adPlatformEnum)
-            }
-
-            override fun onError(errorMode: AdErrorMode?, errorMessage: String?, adPlatformEnum: AdPlatformTypeEnum?) {
-                super.onError(errorMode, errorMessage, adPlatformEnum)
-            }
-
-        })
     }
 
 }

@@ -3,7 +3,6 @@ package com.helikanonlib.simpleadmanager
 import android.app.Activity
 import android.content.Context
 import android.util.Log
-import android.view.View
 import android.view.ViewGroup
 import android.widget.RelativeLayout
 import androidx.core.view.ViewCompat
@@ -11,10 +10,6 @@ import com.applovin.mediation.*
 import com.applovin.mediation.ads.MaxAdView
 import com.applovin.mediation.ads.MaxInterstitialAd
 import com.applovin.mediation.ads.MaxRewardedAd
-import com.applovin.mediation.nativeAds.MaxNativeAdListener
-import com.applovin.mediation.nativeAds.MaxNativeAdLoader
-import com.applovin.mediation.nativeAds.MaxNativeAdView
-import com.applovin.mediation.nativeAds.MaxNativeAdViewBinder
 import com.applovin.sdk.AppLovinMediationProvider
 import com.applovin.sdk.AppLovinSdk
 import com.applovin.sdk.AppLovinSdkConfiguration
@@ -487,123 +482,6 @@ class ApplovinAds(override var appId: String) : AdPlatformWrapper(appId) {
         mrecAdView.loadAd()
     }
 
-    // ################################################################################
-    // ################################### NATIVE #####################################
-    // ################################################################################
-    override fun hasLoadedNative(nativeAdFormat: AdFormatEnum, placementId: String): Boolean {
-        val nativeAds: ArrayList<Any> = if (adIntances.containsKey(placementId) && adIntances[placementId] != null) adIntances.get(placementId)?.instance as ArrayList<Any> else ArrayList<Any>()
-        return nativeAds.size > 0
-    }
-
-    @JvmOverloads
-    override fun loadNativeAds(activity: Activity, placementId: String, nativeAdFormat: AdFormatEnum, count: Int, listener: AdPlatformLoadListener?) {
-
-        var nativeAds: ArrayList<Any> = if (adIntances.containsKey(placementId) && adIntances[placementId] != null) adIntances.get(placementId)?.instance as ArrayList<Any> else ArrayList<Any>()
-
-
-        // destroy olds
-        try {
-            nativeAds.forEach {
-                (it as MaxNativeAdView).recycle()
-            }
-        } catch (e: Exception) {
-            e.printStackTrace()
-        } finally {
-            nativeAds.clear()
-
-            adIntances[placementId] = PlatformAdInstance(
-                nativeAdFormat,
-                placementId,
-                nativeAds
-            )
-        }
-
-        val nativeAdLoader = MaxNativeAdLoader(placementId)
-        nativeAdLoader.setNativeAdListener(object : MaxNativeAdListener() {
-            override fun onNativeAdLoaded(nativeAdView: MaxNativeAdView?, ad: MaxAd) {
-                super.onNativeAdLoaded(nativeAdView, ad)
-
-                nativeAdView?.let {
-                    if (ad.nativeAd?.icon == null) {
-                        nativeAdView.iconImageView.visibility = View.GONE
-                    }
-
-                    nativeAds.add(it)
-                    adIntances[placementId] = PlatformAdInstance(nativeAdFormat, placementId, nativeAds)
-                }
-
-                listener?.onLoaded(platformType)
-            }
-
-            override fun onNativeAdLoadFailed(adUnitId: String, error: MaxError) {
-                super.onNativeAdLoadFailed(adUnitId, error)
-
-                listener?.onError(AdErrorMode.PLATFORM, error?.message ?: "applovin native ad load error", platformType)
-            }
-
-            override fun onNativeAdClicked(ad: MaxAd) {
-                super.onNativeAdClicked(ad)
-            }
-        })
-        // nativeAdLoader.loadAd()
-
-        var layoutId = R.layout.applovin_native_small
-        if (nativeAdFormat == AdFormatEnum.NATIVE_MEDIUM) {
-            layoutId = R.layout.applovin_native_medium
-        }
-        val binder: MaxNativeAdViewBinder = MaxNativeAdViewBinder
-            .Builder(layoutId)
-            .setTitleTextViewId(R.id.title_text_view)
-            .setBodyTextViewId(R.id.body_text_view)
-            .setStarRatingContentViewGroupId(R.id.star_rating_view)
-            .setAdvertiserTextViewId(R.id.advertiser_textView)
-            .setIconImageViewId(R.id.icon_image_view)
-            .setMediaContentViewGroupId(R.id.media_view_container)
-            .setOptionsContentViewGroupId(R.id.options_view)
-            .setCallToActionButtonId(R.id.cta_button)
-            .build()
-
-        nativeAdLoader.loadAd(MaxNativeAdView(binder, activity))
-    }
-
-    private var lastLoadedNativeAdPositions: MutableMap<String, Int> = mutableMapOf()
-
-    override fun showNative(activity: Activity, placementId: String, nativeAdFormat: AdFormatEnum, containerView: ViewGroup, listener: AdPlatformShowListener?): Boolean {
-
-        val nativeAds: ArrayList<Any> = if (adIntances.containsKey(placementId) && adIntances[placementId] != null) adIntances.get(placementId)?.instance as ArrayList<Any> else ArrayList<Any>()
-
-        val lastLoadedNativeAdPosition: Int = if (lastLoadedNativeAdPositions.containsKey(placementId)) lastLoadedNativeAdPositions[placementId]!! else -1
-        var showPositionAt = if (lastLoadedNativeAdPosition == -1) 0 else lastLoadedNativeAdPosition + 1
-
-        if (showPositionAt >= nativeAds.size) {
-            showPositionAt = 0
-        }
-
-        if (nativeAds.size == 0) {
-            return false
-        }
-
-        lastLoadedNativeAdPositions[placementId] = showPositionAt
-
-        val nativeAd = nativeAds[showPositionAt] as MaxNativeAdView?
-
-        nativeAd?.let {
-            _removeViewIfExists(nativeAd, containerView)
-            // containerView.removeAllViews()
-            containerView.addView(nativeAd)
-
-        }
-        return nativeAd != null
-    }
-
-    override fun getNativeAds(activity: Activity, placementId: String, nativeAdFormat: AdFormatEnum): ArrayList<Any> {
-        return if (adIntances.containsKey(placementId) && adIntances[placementId] != null) adIntances.get(placementId)?.instance as ArrayList<Any> else ArrayList<Any>()
-    }
-
-    // ################################################################################
-    // ################################### NATIVE #####################################
-    // ################################################################################
-
     override fun destroy(activity: Activity) {
         try {
 
@@ -619,40 +497,8 @@ class ApplovinAds(override var appId: String) : AdPlatformWrapper(appId) {
                     destroyBanner(activity, adIns.placementId)
                 } else if (adIns.format == AdFormatEnum.MREC) {
                     destroyMrec(activity, adIns.placementId)
-                } else if (adIns.format == AdFormatEnum.NATIVE_SMALL) {
-                    _destroyAllNativeAds(activity, adIns.placementId)
-                } else if (adIns.format == AdFormatEnum.NATIVE_MEDIUM) {
-                    _destroyAllNativeAds(activity, adIns.placementId)
                 }
             }
-
-        } catch (e: Exception) {
-            Log.e("ApplovinAds", e.message ?: "")
-        }
-    }
-
-    private fun _destroyAllNativeAds(activity: Activity, placementId: String) {
-        try {
-            // destroy NATIVE ads
-            val adIns = if (adIntances.containsKey(placementId) && adIntances[placementId] != null) adIntances.get(placementId) else null
-            if (adIns == null) return
-
-            var nativeAds: ArrayList<Any> = adIns.instance as ArrayList<Any>
-            try {
-                nativeAds.forEach {
-                    (it as MaxNativeAdView).recycle()
-                }
-            } catch (e: Exception) {
-                e.printStackTrace()
-            } finally {
-                nativeAds.clear()
-                adIntances[placementId] = PlatformAdInstance(
-                    adIns.format,
-                    adIns.placementId,
-                    nativeAds
-                )
-            }
-
 
         } catch (e: Exception) {
             Log.e("ApplovinAds", e.message ?: "")

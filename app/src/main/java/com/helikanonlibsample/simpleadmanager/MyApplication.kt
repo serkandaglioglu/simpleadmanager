@@ -44,8 +44,6 @@ class MyApplication : Application() {
                     rewarded = "ca-app-pub-3940256099942544/5224354917",
                     banner = "ca-app-pub-3940256099942544/9214589741",
                     mrec = "ca-app-pub-3940256099942544/6300978111",
-                    nativeSmall = "ca-app-pub-3940256099942544/2247696110",
-                    nativeMedium = "",
                     appOpenAd = "ca-app-pub-3940256099942544/9257395921",
                 ),
                 AdPlacementGroup(
@@ -55,8 +53,6 @@ class MyApplication : Application() {
                     rewarded = "f2f5534658a6b4ab",
                     banner = "609a039e1d803bea",
                     mrec = "851a6927fdae17d5",
-                    nativeSmall = "2b1686bf9db060d3",
-                    nativeMedium = "96454048eeffaad2",
                     appOpenAd = "dd9249369deec4ec"
                 ),
 
@@ -67,8 +63,6 @@ class MyApplication : Application() {
                     rewarded = "ca-app-pub-3940256099942544/5224354917",
                     banner = "ca-app-pub-3940256099942544/9214589741",
                     mrec = "ca-app-pub-3940256099942544/6300978111",
-                    nativeSmall = "ca-app-pub-3940256099942544/2247696110",
-                    nativeMedium = "",
                     appOpenAd = "ca-app-pub-3940256099942544/3419835294",
                 )
             )
@@ -84,8 +78,6 @@ class MyApplication : Application() {
         adManager.setAdPlatformSortByAdFormatStr(SimpleAdManager.DEFAULT_PLACEMENT_GROUPCODE, AdFormatEnum.REWARDED.name, "applovin,admob")
         adManager.setAdPlatformSortByAdFormatStr(SimpleAdManager.DEFAULT_PLACEMENT_GROUPCODE, AdFormatEnum.BANNER.name, "admob,applovin")
         adManager.setAdPlatformSortByAdFormatStr(SimpleAdManager.DEFAULT_PLACEMENT_GROUPCODE, AdFormatEnum.MREC.name, "applovin,admob")
-        adManager.setAdPlatformSortByAdFormatStr(SimpleAdManager.DEFAULT_PLACEMENT_GROUPCODE, AdFormatEnum.NATIVE_SMALL.name, "applovin,admob")
-        adManager.setAdPlatformSortByAdFormatStr(SimpleAdManager.DEFAULT_PLACEMENT_GROUPCODE, AdFormatEnum.NATIVE_MEDIUM.name, "applovin,admob")
         adManager.setAdPlatformSortByAdFormatStr(SimpleAdManager.DEFAULT_PLACEMENT_GROUPCODE, AdFormatEnum.APP_OPEN.name, "applovin,admob")
 
 
