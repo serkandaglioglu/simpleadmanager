@@ -1,7 +1,5 @@
 plugins {
     alias(libs.plugins.androidLibrary)
-    alias(libs.plugins.jetbrainsKotlinAndroid)
-    id("kotlin-kapt")
     id("maven-publish")
 }
 
@@ -21,7 +19,7 @@ publishing{
 
 android {
     namespace = "com.helikanonlib.simpleadmanager"
-    compileSdk = 36
+    compileSdk = 37
 
     defaultConfig {
         minSdk = 24
@@ -43,15 +41,14 @@ android {
         sourceCompatibility = JavaVersion.VERSION_17
         targetCompatibility = JavaVersion.VERSION_17
     }
-    kotlin {
-        compilerOptions {
-            jvmTarget.set(org.jetbrains.kotlin.gradle.dsl.JvmTarget.JVM_17)
-        }
-    }
 
     buildFeatures {
         viewBinding = true
         buildConfig = true
+    }
+
+    publishing {
+        singleVariant("release")
     }
 }
 
