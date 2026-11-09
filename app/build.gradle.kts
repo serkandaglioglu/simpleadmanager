@@ -56,6 +56,7 @@ dependencies {
 
 
     implementation(libs.androidx.recyclerview)
+    implementation(libs.androidx.lifecycle.process) // ProcessLifecycleOwner for AppOpenLifecycleController
     implementation(libs.play.services.ads)
     implementation(project(":simpleadmanager"))
 }

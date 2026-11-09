@@ -23,15 +23,11 @@ class AdmobAds(override var appId: String) : AdPlatformWrapper(appId) {
     override var platformType = AdPlatformTypeEnum.ADMOB
     var adIntances: MutableMap<String, PlatformAdInstance?> = mutableMapOf()
 
-    companion object {
-        var isInitialized = false
+    override fun initialize(activity: Activity, onInitializeComplete: ((Boolean) -> Unit)?, testMode: Boolean) {
     }
 
-    override fun initialize(activity: Activity, testMode: Boolean) {
-    }
-
-    override fun initialize(context: Context, testMode: Boolean) {
-        if (isInitialized) return
+    override fun initialize(context: Context, onInitializeComplete: ((Boolean) -> Unit)?, testMode: Boolean) {
+        if (!beginInitialization(onInitializeComplete)) return
 
         CoroutineScope(Dispatchers.IO).launch {
             MobileAds.initialize(context, object : OnInitializationCompleteListener {
@@ -45,10 +41,10 @@ class AdmobAds(override var appId: String) : AdPlatformWrapper(appId) {
                             )
                         }
                     }
+                    completeInitialization()
                 }
             })
         }
-        isInitialized = true
 
         if (testMode) {
             enableTestMode(context, null)
@@ -112,14 +108,14 @@ class AdmobAds(override var appId: String) : AdPlatformWrapper(appId) {
 
                 override fun onAdFailedToLoad(adError: LoadAdError) {
                     adIntances[placementId] = null
-                    listener?.onError(AdErrorMode.PLATFORM, "${platformType.name} interstitial >> error code=${adError.code} / ${adError.message}", platformType)
+                    listener?.onPlatformError(platformError(AdFormatEnum.INTERSTITIAL, placementId, "${platformType.name} interstitial >> error code=${adError.code} / ${adError.message}"))
                 }
             })
     }
 
     override fun showInterstitial(activity: Activity, placementId: String, shownWhere: String, listener: AdPlatformShowListener?) {
         if (!isInterstitialLoaded(placementId)) {
-            listener?.onError(AdErrorMode.PLATFORM, "${platformType.name} interstitial >> noads loaded", platformType)
+            listener?.onPlatformError(platformError(AdFormatEnum.INTERSTITIAL, placementId, "${platformType.name} interstitial >> noads loaded"))
             return
         }
 
@@ -128,7 +124,7 @@ class AdmobAds(override var appId: String) : AdPlatformWrapper(appId) {
         interstitial?.fullScreenContentCallback = object : FullScreenContentCallback() {
             override fun onAdFailedToShowFullScreenContent(adError: AdError) {
                 adIntances[placementId] = null
-                listener?.onError(AdErrorMode.PLATFORM, "${platformType.name} interstitial show >> error code=${adError.code} / ${adError.message}", platformType)
+                listener?.onPlatformError(platformError(AdFormatEnum.INTERSTITIAL, placementId, "${platformType.name} interstitial show >> error code=${adError.code} / ${adError.message}"))
             }
 
             override fun onAdShowedFullScreenContent() {
@@ -188,7 +184,7 @@ class AdmobAds(override var appId: String) : AdPlatformWrapper(appId) {
 
                 override fun onAdFailedToLoad(adError: LoadAdError) {
                     adIntances[placementId] = null
-                    listener?.onError(AdErrorMode.PLATFORM, "${platformType.name} rewarded load >> error code=${adError.code} / ${adError.message}", platformType)
+                    listener?.onPlatformError(platformError(AdFormatEnum.REWARDED, placementId, "${platformType.name} rewarded load >> error code=${adError.code} / ${adError.message}"))
                 }
             })
 
@@ -196,7 +192,7 @@ class AdmobAds(override var appId: String) : AdPlatformWrapper(appId) {
 
     override fun showRewarded(activity: Activity, placementId: String, shownWhere: String, listener: AdPlatformShowListener?) {
         if (!isRewardedLoaded(placementId)) {
-            listener?.onError(AdErrorMode.PLATFORM, "${platformType.name} rewarded >> noadsloaded", platformType)
+            listener?.onPlatformError(platformError(AdFormatEnum.REWARDED, placementId, "${platformType.name} rewarded >> noadsloaded"))
             return
         }
 
@@ -204,7 +200,7 @@ class AdmobAds(override var appId: String) : AdPlatformWrapper(appId) {
 
         rewardedAd?.fullScreenContentCallback = object : FullScreenContentCallback() {
             override fun onAdFailedToShowFullScreenContent(adError: AdError) {
-                listener?.onError(AdErrorMode.PLATFORM, "${platformType.name} rewarded show >> error code=${adError.code} / ${adError.message}", platformType)
+                listener?.onPlatformError(platformError(AdFormatEnum.REWARDED, placementId, "${platformType.name} rewarded show >> error code=${adError.code} / ${adError.message}"))
                 adIntances[placementId] = null
             }
 
@@ -256,7 +252,7 @@ class AdmobAds(override var appId: String) : AdPlatformWrapper(appId) {
                 containerView.addView(bannerAdView, lp)
                 listener?.onDisplayed(platformType)
             } catch (e: Exception) {
-                listener?.onError(AdErrorMode.PLATFORM, "${platformType.name} banner >> isbannerloaded", platformType)
+                listener?.onPlatformError(platformError(AdFormatEnum.BANNER, placementId, "${platformType.name} banner >> isbannerloaded"))
             }
             return
         }
@@ -275,9 +271,10 @@ class AdmobAds(override var appId: String) : AdPlatformWrapper(appId) {
                     adIntances[placementId] = null
                     activity.runOnUiThread {
                         _removeBannerViewIfExists(bannerAdView, containerView)
+                        bannerAdView.destroy() // a failed view is never reused
                     }
 
-                    listener?.onError(AdErrorMode.PLATFORM, "${platformType.name} banner >> error code=${error.code} / ${error.message}", platformType)
+                    listener?.onPlatformError(platformError(AdFormatEnum.BANNER, placementId, "${platformType.name} banner >> error code=${error.code} / ${error.message}"))
                 }
             }
 
@@ -355,7 +352,7 @@ class AdmobAds(override var appId: String) : AdPlatformWrapper(appId) {
                 containerView.addView(mrecAdView, lp)
                 listener?.onDisplayed(platformType)
             } catch (e: Exception) {
-                listener?.onError(AdErrorMode.PLATFORM, "${platformType.name} mrec >> ismrecloaded", platformType)
+                listener?.onPlatformError(platformError(AdFormatEnum.MREC, placementId, "${platformType.name} mrec >> ismrecloaded"))
             }
             return
         }
@@ -374,9 +371,10 @@ class AdmobAds(override var appId: String) : AdPlatformWrapper(appId) {
 
                     activity.runOnUiThread {
                         _removeBannerViewIfExists(mrecAdView, containerView)
+                        mrecAdView.destroy() // a failed view is never reused
                     }
 
-                    listener?.onError(AdErrorMode.PLATFORM, "${platformType.name} mrec >> error code=${error.code} / ${error.message}", platformType)
+                    listener?.onPlatformError(platformError(AdFormatEnum.MREC, placementId, "${platformType.name} mrec >> error code=${error.code} / ${error.message}"))
                 }
             }
 

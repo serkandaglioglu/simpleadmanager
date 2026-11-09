@@ -10,9 +10,40 @@ import java.util.*
 abstract class AdPlatformWrapper(open var appId: String) {
 
     abstract val platformType: AdPlatformTypeEnum
+    var isInitialized: Boolean = false
+        private set
+    private var isInitializeStarted = false
+    private val pendingInitializeCallbacks = mutableListOf<(Boolean) -> Unit>()
 
-    abstract fun initialize(activity: Activity, testMode: Boolean = false)
-    abstract fun initialize(context: Context, testMode: Boolean = false)
+    /** Queues the callback; returns true only for the first call, which must start the SDK initialization. */
+    protected fun beginInitialization(onInitializeComplete: ((Boolean) -> Unit)?): Boolean {
+        synchronized(pendingInitializeCallbacks) {
+            if (!isInitialized) {
+                onInitializeComplete?.let { pendingInitializeCallbacks.add(it) }
+                if (isInitializeStarted) return false
+                isInitializeStarted = true
+                return true
+            }
+        }
+        onInitializeComplete?.invoke(true)
+        return false
+    }
+
+    protected fun completeInitialization() {
+        val callbacks = synchronized(pendingInitializeCallbacks) {
+            isInitialized = true
+            pendingInitializeCallbacks.toList().also { pendingInitializeCallbacks.clear() }
+        }
+        callbacks.forEach { it(true) }
+    }
+
+    protected fun platformError(format: AdFormatEnum, placementId: String, message: String, cause: Throwable? = null) =
+        AdPlatformError(format, platformType, placementId, message, cause)
+
+    abstract fun initialize(activity: Activity, onInitializeComplete: ((Boolean) -> Unit)? = null, testMode: Boolean = false)
+
+    /** onInitializeComplete is always called once per call, also when the SDK was already initialized. */
+    abstract fun initialize(context: Context, onInitializeComplete: ((Boolean) -> Unit)? = null, testMode: Boolean = false)
     abstract fun enableTestMode(context: Context, deviceId: String? = null)
 
     abstract fun loadInterstitial(activity: Activity, placementId: String, listener: AdPlatformLoadListener?)

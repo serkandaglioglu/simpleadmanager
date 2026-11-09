@@ -61,7 +61,6 @@ dependencies {
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
 
-    implementation(libs.androidx.lifecycle.process)
 
     // implementation(libs.firebase.crashlytics.buildtools) // NativeTemplateStyle.java içinde bulunan @CanIgnoreReturnValue annotation için ekledik
 

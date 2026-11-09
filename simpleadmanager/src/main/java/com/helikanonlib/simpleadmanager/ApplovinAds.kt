@@ -25,24 +25,17 @@ class ApplovinAds(override var appId: String) : AdPlatformWrapper(appId) {
     override var platformType = AdPlatformTypeEnum.APPLOVIN
     var adIntances: MutableMap<String, PlatformAdInstance?> = mutableMapOf()
 
-    companion object {
-        var isInitialized = false
+    override fun initialize(activity: Activity, onInitializeComplete: ((Boolean) -> Unit)?, testMode: Boolean) {
     }
 
-    override fun initialize(activity: Activity, testMode: Boolean) {
-    }
-
-    override fun initialize(context: Context, testMode: Boolean) {
-        if (isInitialized) return
+    override fun initialize(context: Context, onInitializeComplete: ((Boolean) -> Unit)?, testMode: Boolean) {
+        if (!beginInitialization(onInitializeComplete)) return
 
         val initConfig = AppLovinSdkInitializationConfiguration.builder(appId)
             .setMediationProvider(AppLovinMediationProvider.MAX)
             .build()
 
-        AppLovinSdk.getInstance(context).initialize(initConfig) { sdkConfig ->
-
-        }
-        isInitialized = true
+        AppLovinSdk.getInstance(context).initialize(initConfig) { completeInitialization() }
     }
 
     override fun enableTestMode(context: Context, deviceId: String?) {
@@ -95,7 +88,7 @@ class ApplovinAds(override var appId: String) : AdPlatformWrapper(appId) {
 
             override fun onAdLoadFailed(adUnitId: String, error: MaxError) {
                 adIntances[placementId] = null
-                listener?.onError(AdErrorMode.PLATFORM, "${platformType.name} interstitial >> error code=${error?.code} / ${error?.message}", platformType)
+                listener?.onPlatformError(platformError(AdFormatEnum.INTERSTITIAL, placementId, "${platformType.name} interstitial >> error code=${error.code} / ${error.message}"))
             }
 
             override fun onAdDisplayed(ad: MaxAd) {
@@ -127,7 +120,7 @@ class ApplovinAds(override var appId: String) : AdPlatformWrapper(appId) {
 
     override fun showInterstitial(activity: Activity, placementId: String, shownWhere: String, listener: AdPlatformShowListener?) {
         if (!isInterstitialLoaded(placementId)) {
-            listener?.onError(AdErrorMode.PLATFORM, "${platformType.name} interstitial >> noads loaded", platformType)
+            listener?.onPlatformError(platformError(AdFormatEnum.INTERSTITIAL, placementId, "${platformType.name} interstitial >> noads loaded"))
             return
         }
 
@@ -153,12 +146,12 @@ class ApplovinAds(override var appId: String) : AdPlatformWrapper(appId) {
 
             override fun onAdLoadFailed(adUnitId: String, error: MaxError) {
                 adIntances[placementId] = null
-                listener?.onError(AdErrorMode.PLATFORM, "${platformType.name} interstitial show >> error code=${error?.code} / ${error?.message}", platformType)
+                listener?.onPlatformError(platformError(AdFormatEnum.INTERSTITIAL, placementId, "${platformType.name} interstitial show >> error code=${error.code} / ${error.message}"))
             }
 
             override fun onAdDisplayFailed(ad: MaxAd, error: MaxError) {
                 adIntances[placementId] = null
-                listener?.onError(AdErrorMode.PLATFORM, "${platformType.name} interstitial show >> error code=${error?.code} / ${error?.message}", platformType)
+                listener?.onPlatformError(platformError(AdFormatEnum.INTERSTITIAL, placementId, "${platformType.name} interstitial show >> error code=${error.code} / ${error.message}"))
             }
 
         })
@@ -196,7 +189,7 @@ class ApplovinAds(override var appId: String) : AdPlatformWrapper(appId) {
         override fun onAdLoadFailed(adUnitId: String, error: MaxError) {
             adIntances[placementId] = null
             rewardedLoadListeners.remove(placementId)?.forEach {
-                it.onError(AdErrorMode.PLATFORM, "${platformType.name} rewarded load >> error code=${error.code} / ${error.message}", platformType)
+                it.onPlatformError(platformError(AdFormatEnum.REWARDED, placementId, "${platformType.name} rewarded load >> error code=${error.code} / ${error.message}"))
             }
         }
 
@@ -212,7 +205,7 @@ class ApplovinAds(override var appId: String) : AdPlatformWrapper(appId) {
 
         override fun onAdDisplayFailed(ad: MaxAd, error: MaxError) {
             rewardedShowListeners.remove(placementId)
-                ?.onError(AdErrorMode.PLATFORM, "${platformType.name} rewarded show >> error code=${error.code} / ${error.message}", platformType)
+                ?.onPlatformError(platformError(AdFormatEnum.REWARDED, placementId, "${platformType.name} rewarded show >> error code=${error.code} / ${error.message}"))
         }
 
         override fun onUserRewarded(ad: MaxAd, reward: MaxReward) {
@@ -242,7 +235,7 @@ class ApplovinAds(override var appId: String) : AdPlatformWrapper(appId) {
 
     override fun showRewarded(activity: Activity, placementId: String, shownWhere: String, listener: AdPlatformShowListener?) {
         if (!isRewardedLoaded(placementId)) {
-            listener?.onError(AdErrorMode.PLATFORM, "${platformType.name} rewarded >> noadsloaded", platformType)
+            listener?.onPlatformError(platformError(AdFormatEnum.REWARDED, placementId, "${platformType.name} rewarded >> noadsloaded"))
             return
         }
 
@@ -286,7 +279,7 @@ class ApplovinAds(override var appId: String) : AdPlatformWrapper(appId) {
                 containerView.addView(bannerAdView)
                 listener?.onDisplayed(platformType)
             } catch (e: Exception) {
-                listener?.onError(AdErrorMode.PLATFORM, "${platformType.name} banner >> isbannerloaded", platformType)
+                listener?.onPlatformError(platformError(AdFormatEnum.BANNER, placementId, "${platformType.name} banner >> isbannerloaded"))
             }
             return
         }
@@ -324,7 +317,7 @@ class ApplovinAds(override var appId: String) : AdPlatformWrapper(appId) {
                         _removeBannerViewIfExists(bannerAdView, containerView)
                     }
 
-                    listener?.onError(AdErrorMode.PLATFORM, "${platformType.name} banner >> error code=${error?.code} / ${error?.message}", platformType)
+                    listener?.onPlatformError(platformError(AdFormatEnum.BANNER, placementId, "${platformType.name} banner >> error code=${error.code} / ${error.message}"))
                 }
             }
 
@@ -389,7 +382,7 @@ class ApplovinAds(override var appId: String) : AdPlatformWrapper(appId) {
                 containerView.addView(mrecAdView)
                 listener?.onDisplayed(platformType)
             } catch (e: Exception) {
-                listener?.onError(AdErrorMode.PLATFORM, "${platformType.name} mrec >> ismrecloaded", platformType)
+                listener?.onPlatformError(platformError(AdFormatEnum.MREC, placementId, "${platformType.name} mrec >> ismrecloaded"))
             }
             return
         }
@@ -421,7 +414,7 @@ class ApplovinAds(override var appId: String) : AdPlatformWrapper(appId) {
                         _removeBannerViewIfExists(mrecAdView, containerView)
                     }
 
-                    listener?.onError(AdErrorMode.PLATFORM, "${platformType.name} mrec >> error code=${error?.code} / ${error?.message}", platformType)
+                    listener?.onPlatformError(platformError(AdFormatEnum.MREC, placementId, "${platformType.name} mrec >> error code=${error.code} / ${error.message}"))
                 }
             }
 
