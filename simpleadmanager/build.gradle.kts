@@ -72,20 +72,20 @@ dependencies {
 
 
     // APPLOVIN
-    implementation("com.applovin:applovin-sdk:+")
-    implementation("com.applovin.mediation:fyber-adapter:+")
-    implementation("com.applovin.mediation:google-ad-manager-adapter:+")
-    implementation("com.applovin.mediation:google-adapter:+")
-    implementation("com.applovin.mediation:vungle-adapter:+")
-    implementation("com.applovin.mediation:facebook-adapter:+")
-    implementation("com.applovin.mediation:mintegral-adapter:+")
-    implementation("com.applovin.mediation:bytedance-adapter:+"){
+    implementation("com.applovin:applovin-sdk:13.7.0")
+    implementation("com.applovin.mediation:fyber-adapter:8.5.1.0")
+    implementation("com.applovin.mediation:google-ad-manager-adapter:25.5.0.0")
+    implementation("com.applovin.mediation:google-adapter:25.5.0.0")
+    implementation("com.applovin.mediation:vungle-adapter:7.8.0.0")
+    implementation("com.applovin.mediation:facebook-adapter:6.22.0.1")
+    implementation("com.applovin.mediation:mintegral-adapter:17.2.21.0")
+    implementation("com.applovin.mediation:bytedance-adapter:8.4.0.5.0"){
         exclude(module = "tiktok-business-android-sdk-comp")
     }
-    implementation("com.applovin.mediation:unityads-adapter:+")
+    implementation("com.applovin.mediation:unityads-adapter:4.21.0.1")
 
     // inmobi begin
-    implementation("com.applovin.mediation:inmobi-adapter:+")
+    implementation("com.applovin.mediation:inmobi-adapter:11.5.1.0")
     implementation("com.squareup.picasso:picasso:2.8")
     // implementation("androidx.recyclerview:recyclerview:1.1.0") // zaten yukarıda ekli
     // inmobi end

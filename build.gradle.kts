@@ -17,6 +17,6 @@ buildscript {
         maven { url = uri("https://artifacts.applovin.com/android") }
     }
     dependencies {
-        classpath ("com.applovin.quality:AppLovinQualityServiceGradlePlugin:+")
+        classpath("com.applovin.quality:AppLovinQualityServiceGradlePlugin:5.12.14")
     }
 }
